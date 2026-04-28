@@ -5,53 +5,422 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LIBERTY Dental Plan - Member Portal</title>
 
-  <!-- Your existing CSS (keep paths as in your repo) -->
   <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/bootstrap-overrides.css">
   <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/styles.css">
 
-  <!-- MSAL -->
   <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
 
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 100px; }
-    .login-box { width: 320px; margin: auto; }
-    input { width: 100%; padding: 10px; margin: 8px 0; }
-    button {
-      width: 100%; padding: 12px;
-      background-color: #0078d4; color: #fff; border: none; cursor: pointer;
-      font-size: 16px;
+    :root{
+      --brand-blue:#3456ad;
+      --brand-dark:#111b36;
+      --panel:#e9e9ee;
+      --info-bg:#dfe5f8;
+      --warn-bg:#f2e7e7;
+      --curve:#dcecf7;
     }
-    button:hover { opacity: 0.9; }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:#f7f7f7;
+      color:#222;
+    }
+
+    .topbar{
+      height:45px;
+      background:var(--brand-blue);
+      color:#fff;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      padding:0 18px;
+      gap:12px;
+      font-size:16px;
+    }
+
+    .topbar .icon-box{
+      width:22px;
+      height:22px;
+      border:1px solid rgba(255,255,255,.6);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      line-height:1;
+    }
+
+    .page{
+      position:relative;
+      min-height:calc(100vh - 45px);
+      overflow:hidden;
+      background:#f7f7f7;
+    }
+
+    .curve-left,
+    .curve-right{
+      position:absolute;
+      border:22px solid var(--curve);
+      border-radius:50%;
+      pointer-events:none;
+      opacity:.95;
+    }
+
+    .curve-left{
+      width:760px;
+      height:760px;
+      left:-470px;
+      bottom:-250px;
+    }
+
+    .curve-right{
+      width:980px;
+      height:980px;
+      right:-430px;
+      bottom:-420px;
+    }
+
+    .diag-left,
+    .diag-right{
+      position:absolute;
+      width:20px;
+      height:92px;
+      background:var(--curve);
+      transform:skew(-25deg);
+      top:62px;
+    }
+
+    .diag-left{left:6px}
+    .diag-right{right:398px}
+
+    .header{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      padding:12px 95px 8px;
+      position:relative;
+      z-index:2;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .logo img{
+      height:42px;
+      width:auto;
+    }
+
+    .emergency-btn{
+      background:#fff;
+      border:1px solid #9fb3d6;
+      color:#4f4a3f;
+      border-radius:8px;
+      padding:16px 28px;
+      font-weight:700;
+      font-size:16px;
+      box-shadow:0 1px 2px rgba(0,0,0,.06);
+      cursor:pointer;
+    }
+
+    .content{
+      max-width:1180px;
+      margin:40px auto 0;
+      display:grid;
+      grid-template-columns:minmax(580px, 1fr) 290px;
+      gap:70px;
+      align-items:start;
+      position:relative;
+      z-index:2;
+      padding:0 40px 40px;
+    }
+
+    .alerts{
+      max-width:650px;
+      margin-bottom:28px;
+    }
+
+    .alert{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-radius:6px;
+      padding:14px 16px;
+      margin-bottom:30px;
+      color:#31487d;
+      font-size:18px;
+      line-height:1.45;
+    }
+
+    .alert.info{background:var(--info-bg)}
+    .alert.warn{
+      background:var(--warn-bg);
+      color:#334a80;
+    }
+
+    .alert-left{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding-right:10px;
+    }
+
+    .alert-left img{
+      width:22px;
+      height:22px;
+      margin-top:2px;
+    }
+
+    .alert-close{
+      font-size:22px;
+      color:#8d8d8d;
+      cursor:pointer;
+      line-height:1;
+      user-select:none;
+    }
+
+    .hero{
+      max-width:650px;
+      text-align:center;
+      padding-top:28px;
+    }
+
+    .hero h1{
+      font-size:62px;
+      line-height:1.02;
+      margin:0 0 24px;
+      color:var(--brand-dark);
+      font-weight:800;
+    }
+
+    .hero p{
+      font-size:24px;
+      line-height:1.45;
+      margin:0 auto 26px;
+      color:#1f2433;
+      max-width:610px;
+    }
+
+    .login-panel{
+      background:var(--panel);
+      padding:28px 34px 36px;
+      min-height:518px;
+      box-shadow:none;
+    }
+
+    .login-panel h2{
+      margin:0 0 28px;
+      text-align:center;
+      font-size:25px;
+      font-weight:700;
+      color:#333;
+    }
+
+    .field{
+      margin-bottom:18px;
+      text-align:left;
+    }
+
+    .field label{
+      display:block;
+      margin-bottom:10px;
+      font-size:17px;
+      font-weight:700;
+      color:#333;
+    }
+
+    .field input{
+      width:100%;
+      height:38px;
+      border:1px solid #909090;
+      border-radius:3px;
+      padding:8px 12px;
+      font-size:16px;
+      background:#fff;
+    }
+
+    .login-btn,
+    .register-btn{
+      width:100%;
+      height:36px;
+      border:none;
+      border-radius:3px;
+      background:var(--brand-blue);
+      color:#fff;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .login-btn{margin-top:10px}
+    .login-links{
+      text-align:center;
+      margin:38px 0 36px;
+      line-height:1.4;
+    }
+
+    .login-links a{
+      color:#4b4b4b;
+      text-decoration:none;
+      font-size:17px;
+    }
+
+    .login-links a:hover{text-decoration:underline}
+
+    .new-member{
+      text-align:center;
+      margin-top:18px;
+    }
+
+    .new-member h3{
+      margin:0 0 18px;
+      font-size:22px;
+      color:#333;
+      font-weight:700;
+    }
+
+    #status{
+      min-height:22px;
+      margin-top:14px;
+      text-align:center;
+      font-size:14px;
+      color:#b42318;
+    }
+
+    @media (max-width: 1100px){
+      .content{
+        grid-template-columns:1fr;
+        gap:32px;
+      }
+      .login-panel{
+        max-width:360px;
+        margin:0 auto;
+        min-height:auto;
+      }
+      .diag-right{display:none}
+    }
+
+    @media (max-width: 768px){
+      .header{
+        grid-template-columns:1fr;
+        gap:14px;
+        padding:16px 20px 8px;
+        justify-items:center;
+      }
+      .content{
+        padding:0 20px 40px;
+      }
+      .hero h1{
+        font-size:44px;
+      }
+      .hero p{
+        font-size:20px;
+      }
+      .topbar{
+        font-size:14px;
+        gap:8px;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <div class="login-box">
-    <h2>Member Login</h2>
+  <div class="topbar">
+    <span>Text Size</span>
+    <span class="icon-box">−</span>
+    <span class="icon-box">↻</span>
+    <span class="icon-box">+</span>
+    <span>🌐 English</span>
+  </div>
 
-    <!-- Visual-only fields (External ID does NOT use these directly) -->
-  
+  <div class="page">
+    <div class="curve-left"></div>
+    <div class="curve-right"></div>
+    <div class="diag-left"></div>
+    <div class="diag-right"></div>
 
-    <!-- This button WILL trigger MSAL -->
-    <button id="loginBtn">Member Login</button>
+    <header class="header">
+      <div class="logo">
+        <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan">
+      </div>
+      <button class="emergency-btn" type="button">I have a Dental Emergency</button>
+      <div></div>
+    </header>
 
-    <p id="status"></p>
+    <main class="content">
+      <section>
+        <div class="alerts">
+          <div class="alert info">
+            <div class="alert-left">
+              <img src="./Info.svg" alt="">
+              <div>Para obtener ayuda en español, llame al <strong>888.703.6999</strong></div>
+            </div>
+            <div class="alert-close">×</div>
+          </div>
+
+          <div class="alert warn">
+            <div class="alert-left">
+              <div>
+                Please <strong>re-register</strong> with a new username and password the <strong>first time</strong> you login to the new Portal and App.
+              </div>
+            </div>
+            <div class="alert-close">×</div>
+          </div>
+        </div>
+
+        <div class="hero">
+          <h1>Welcome to<br>My Compass</h1>
+          <p>Liberty wants to get you the information you need, when you need it.</p>
+          <p>Look for a dentist, read about your benefits, download a copy of your Member ID Card, and more!</p>
+          <p>You can log into this portal 24 hours a day, 7 days a week.</p>
+        </div>
+      </section>
+
+      <aside class="login-panel">
+        <h2>Member Login</h2>
+
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" type="text" placeholder="Username" autocomplete="username">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+        </div>
+
+        <button class="login-btn" id="loginBtn" type="button">Login</button>
+
+        <div class="login-links">
+          <a href="#" onclick="return false;">Forgot Password?</a><br>
+          <a href="#" onclick="return false;">Forgot Username?</a>
+        </div>
+
+        <div class="new-member">
+          <h3>New Member?</h3>
+          <button class="register-btn" type="button">Register Now</button>
+        </div>
+
+        <div id="status"></div>
+      </aside>
+    </main>
   </div>
 
   <script>
-    // ====== CONFIG: UPDATE THESE ======
     const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
     const TENANT_DOMAIN = "birlasoftdentalentra.onmicrosoft.com";
     const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-    const USER_FLOW = "LDFLOW"; // e.g. B2C_1_signin
-    const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/"; // exact match in Entra
+    const USER_FLOW = "LDFLOW";
+    const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
 
-    // ====== MSAL SETUP ======
     const msalConfig = {
       auth: {
         clientId: CLIENT_ID,
-        authority: `https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505`,
-        redirectUri: REDIRECT_URI
+        authority: `https://${TENANT_HOST}/${TENANT_DOMAIN}/${USER_FLOW}`,
+        redirectUri: REDIRECT_URI,
+        knownAuthorities: [TENANT_HOST]
       },
       cache: {
         cacheLocation: "sessionStorage"
@@ -60,31 +429,45 @@
 
     const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-    // ====== LOGIN CLICK (guaranteed binding) ======
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      console.log("Login clicked");
-      msalInstance.loginRedirect({
-        scopes: ["openid", "profile"]
-      });
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const status = document.getElementById("status");
+      status.textContent = "Redirecting to secure sign-in...";
+      try {
+        await msalInstance.loginRedirect({
+          scopes: ["openid", "profile"]
+        });
+      } catch (error) {
+        console.error("Auth error:", error);
+        status.textContent = "Authentication error. Check console (F12).";
+      }
     });
 
-    // ====== HANDLE REDIRECT RESPONSE ======
     msalInstance.handleRedirectPromise()
       .then((response) => {
-        if (response && response.account) {
-          console.log("Login success:", response);
-          document.getElementById("status").innerText =
-            "Welcome " + response.account.username;
+        const status = document.getElementById("status");
 
-          // Redirect after successful login
+        if (response && response.account) {
+          status.textContent = "Welcome " + response.account.username;
+          window.location.href = "dashboard.html";
+          return;
+        }
+
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
           window.location.href = "dashboard.html";
         }
       })
       .catch((error) => {
         console.error("Auth error:", error);
-        document.getElementById("status").innerText =
+        document.getElementById("status").textContent =
           "Authentication error. Check console (F12).";
       });
+
+    document.querySelectorAll(".alert-close").forEach((el) => {
+      el.addEventListener("click", () => {
+        el.parentElement.style.display = "none";
+      });
+    });
   </script>
 </body>
 </html>
