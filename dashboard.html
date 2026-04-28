@@ -70,41 +70,38 @@
     </div>
 
     <script>
-        const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-        const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
-        const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
 
-        const msalConfig = {
-            auth: {
-                clientId: CLIENT_ID,
-                authority: `https://${TENANT_HOST}/${TENANT_ID}`,
-                knownAuthorities: [TENANT_HOST],
-                redirectUri: "https://anilkishore1978.github.io/ACPL-test/",
-                postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/",
-                navigateToLoginRequestUrl: false
-            },
-            cache: {
-                cacheLocation: "sessionStorage"
-            }
-        };
+const HOME_PAGE = "https://anilkishore1978.github.io/ACPL-test/";
+const DASHBOARD_PAGE = "https://anilkishore1978.github.io/ACPL-test/dashboard.html";
 
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
+const msalConfig = {
+  auth: {
+    clientId: CLIENT_ID,
+    authority: `https://${TENANT_HOST}/${TENANT_ID}`,
+    knownAuthorities: [TENANT_HOST],
+    redirectUri: HOME_PAGE,
+    postLogoutRedirectUri: HOME_PAGE,
+    navigateToLoginRequestUrl: false
+  },
+  cache: {
+    cacheLocation: "sessionStorage",
+    storeAuthStateInCookie: false
+  }
+};
 
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            try {
-                const accounts = msalInstance.getAllAccounts();
-                const logoutRequest = {
-                    account: accounts.length > 0 ? accounts[0] : null,
-                    postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/"
-                };
+const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-                await msalInstance.logoutRedirect(logoutRequest);
-            } catch (error) {
-                console.error("Logout error:", error);
-                document.getElementById("status").innerText =
-                    `${error.errorCode || "logout_error"}: ${error.errorMessage || error.message}`;
-            }
-        });
-    </script>
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  const account = msalInstance.getActiveAccount() || msalInstance.getAllAccounts()[0];
+
+  await msalInstance.logoutRedirect({
+    account: account,
+    postLogoutRedirectUri: HOME_PAGE
+  });
+});
+</script>
 </body>
 </html>
