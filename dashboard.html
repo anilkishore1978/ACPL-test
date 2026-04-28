@@ -1,10 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
+
+    <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
+
+    <style>
+        body {
+            text-align: center;
+            margin-top: 100px;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .card {
+            width: 420px;
+            max-width: 90%;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 24px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 6px;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        #status {
+            margin-top: 16px;
+            font-size: 14px;
+            color: #374151;
+        }
+    </style>
 </head>
-<body style="text-align:center; margin-top:100px; font-family:Arial;">
-    <h2>Welcome to Member Dashboard</h2>
-    <p>Login successful 🎉</p>
+<body>
+    <div class="card">
+        <h2>Welcome to Member Dashboard</h2>
+        <p>Login successful 🎉</p>
+
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+        const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+        const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+
+        const msalConfig = {
+            auth: {
+                clientId: CLIENT_ID,
+                authority: `https://${TENANT_HOST}/${TENANT_ID}`,
+                knownAuthorities: [TENANT_HOST],
+                redirectUri: "https://anilkishore1978.github.io/ACPL-test/",
+                postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/",
+                navigateToLoginRequestUrl: false
+            },
+            cache: {
+                cacheLocation: "sessionStorage"
+            }
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            try {
+                const accounts = msalInstance.getAllAccounts();
+                const logoutRequest = {
+                    account: accounts.length > 0 ? accounts[0] : null,
+                    postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/"
+                };
+
+                await msalInstance.logoutRedirect(logoutRequest);
+            } catch (error) {
+                console.error("Logout error:", error);
+                document.getElementById("status").innerText =
+                    `${error.errorCode || "logout_error"}: ${error.errorMessage || error.message}`;
+            }
+        });
+    </script>
 </body>
 </html>
