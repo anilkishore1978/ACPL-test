@@ -2,52 +2,209 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LIBERTY Dental Plan - Member Portal</title>
 
-  <!-- Your existing CSS (keep paths as in your repo) -->
-  <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/bootstrap-overrides.css">
-  <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/styles.css">
+  <!-- Uploaded CSS -->
+  <link rel="stylesheet" href="./bootstrap-overrides.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./all.min.css" />
+
+  <!-- Roboto to match styles.css -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
   <!-- MSAL -->
   <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
 
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 100px; }
-    .login-box { width: 320px; margin: auto; }
-    input { width: 100%; padding: 10px; margin: 8px 0; }
-    button {
-      width: 100%; padding: 12px;
-      background-color: #0078d4; color: #fff; border: none; cursor: pointer;
-      font-size: 16px;
+    body {
+      background: #ffffff;
+      color: #333;
     }
-    button:hover { opacity: 0.9; }
+
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background: #ffffff;
+    }
+
+    .portal-card {
+      width: 100%;
+      max-width: 520px;
+      background: #fff;
+      border: 1px solid #d8dde6;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .brand-top {
+      text-align: center;
+      padding: 24px 24px 8px;
+      background: #fff;
+    }
+
+    .brand-top img {
+      max-width: 220px;
+      height: auto;
+      margin: 0 auto 10px;
+      display: block;
+    }
+
+    .brand-subtitle {
+      font-size: 14px;
+      color: #494949;
+      margin: 0;
+    }
+
+    .unified_container {
+      margin-bottom: 0 !important;
+      color: #333;
+    }
+
+    .unified_container .heading h1 {
+      margin-top: 0;
+    }
+
+    #api {
+      padding: 24px;
+    }
+
+    #api .intro {
+      display: block;
+      text-align: center;
+      padding: 0 0 16px;
+      color: #494949;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 12px;
+      color: #3352a3;
+      font-weight: 500;
+      min-height: 24px;
+    }
+
+    .field-note {
+      font-size: 13px;
+      color: #666;
+      text-align: left;
+      margin-top: -4px;
+      margin-bottom: 10px;
+    }
+
+    .portal-links {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .portal-links a {
+      color: #3352a3;
+      text-decoration: none;
+    }
+
+    .portal-links a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-brand {
+      text-align: center;
+      padding: 16px 24px 24px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .footer-brand img {
+      max-width: 180px;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+    }
+
+    @media (max-width: 576px) {
+      #api {
+        padding: 18px;
+      }
+
+      .brand-top {
+        padding: 20px 16px 8px;
+      }
+    }
   </style>
 </head>
-
 <body>
-  <div class="login-box">
-    <h2>Member Login</h2>
+  <main class="page-shell">
+    <section class="portal-card">
+      <div class="brand-top">
+        <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan" />
+        <p class="brand-subtitle">Member Portal Sign In</p>
+      </div>
 
-    <!-- Visual-only fields (External ID does NOT use these directly) -->
-    <input type="text" placeholder="Username">
-    <input type="password" placeholder="Password">
+      <div class="unified_container">
+        <div class="heading">
+          <h1>Sign in to your account</h1>
+        </div>
 
-    <!-- This button WILL trigger MSAL -->
-    <button id="loginBtn">Login</button>
+        <div id="api">
+          <div class="intro">
+            Enter your username and password to continue.
+          </div>
 
-    <p id="status"></p>
-  </div>
+          <form id="loginForm" novalidate>
+            <div class="entry">
+              <label for="signInName">Username</label>
+              <input
+                type="text"
+                id="signInName"
+                name="signInName"
+                placeholder="Enter username"
+                autocomplete="username"
+              />
+            </div>
+
+            <div class="entry">
+              <label for="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+              />
+              <div class="field-note">Authentication is handled securely through Microsoft Entra External ID.</div>
+            </div>
+
+            <div class="buttons">
+              <button type="button" id="cancel">Cancel</button>
+              <button type="submit" id="next">Login</button>
+            </div>
+
+            <div class="portal-links">
+              <a href="#" id="forgotPassword">Forgot password?</a>
+            </div>
+
+            <p id="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-brand">
+        <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan footer logo" />
+      </div>
+    </section>
+  </main>
 
   <script>
-    // ====== CONFIG: UPDATE THESE ======
-    const CLIENT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+    const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
     const TENANT_DOMAIN = "birlasoftdentalentra.onmicrosoft.com";
     const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-    const USER_FLOW = "<YOUR-USER-FLOW>"; // e.g. B2C_1_signin
-    const REDIRECT_URI = "https://anilkishore1978.github.io/test/"; // exact match in Entra
+    const USER_FLOW = "LDFLOW";
+    const REDIRECT_URI = "https://anilkishore1978.github.io/test/dashboard.html";
 
-    // ====== MSAL SETUP ======
     const msalConfig = {
       auth: {
         clientId: CLIENT_ID,
@@ -61,30 +218,52 @@
 
     const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-    // ====== LOGIN CLICK (guaranteed binding) ======
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      console.log("Login clicked");
-      msalInstance.loginRedirect({
-        scopes: ["openid", "profile"]
-      });
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("next");
+    const cancelBtn = document.getElementById("cancel");
+    const statusEl = document.getElementById("status");
+
+    loginForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      statusEl.textContent = "Redirecting to secure sign-in...";
+      loginBtn.disabled = true;
+
+      try {
+        await msalInstance.loginRedirect({
+          scopes: ["openid", "profile"]
+        });
+      } catch (error) {
+        console.error("Login error:", error);
+        statusEl.textContent = "Authentication error. Check console (F12).";
+        loginBtn.disabled = false;
+      }
     });
 
-    // ====== HANDLE REDIRECT RESPONSE ======
+    cancelBtn.addEventListener("click", function () {
+      document.getElementById("signInName").value = "";
+      document.getElementById("password").value = "";
+      statusEl.textContent = "";
+    });
+
     msalInstance.handleRedirectPromise()
       .then((response) => {
         if (response && response.account) {
-          console.log("Login success:", response);
-          document.getElementById("status").innerText =
-            "Welcome " + response.account.username;
+          statusEl.textContent = "Welcome " + (response.account.username || "User");
+          window.location.href = "dashboard.html";
+          return;
+        }
 
-          // Redirect after successful login
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+          statusEl.textContent = "Welcome " + (accounts[0].username || "User");
           window.location.href = "dashboard.html";
         }
       })
       .catch((error) => {
         console.error("Auth error:", error);
-        document.getElementById("status").innerText =
-          "Authentication error. Check console (F12).";
+        statusEl.textContent = "Authentication error. Check console (F12).";
+        loginBtn.disabled = false;
       });
   </script>
 </body>
