@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIBERTY Dental Plan - Member Portal</title>
+
+    <!-- Existing CSS (kept same) -->
+    <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/bootstrap-overrides.css">
+    <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/styles.css">
+
+    <!-- MSAL -->
+    <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 100px;
+        }
+        .login-box {
+            width: 300px;
+            margin: auto;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-box">
+        <h2>Member Login</h2>
+
+        <!-- UI preserved (visual only) -->
+        <input type="text" placeholder="Username">
+        <input type="password" placeholder="Password">
+
+        <button onclick="triggerLogin()">Login</button>
+
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const msalConfig = {
+            auth: {
+                clientId: "36090fda-8a83-4040-8c58-7cf784511505",
+                authority: "https://birlasoftdentalentra.ciamlogin.com/birlasoftdentalentra.onmicrosoft.com/oidc",
+                redirectUri: window.location.origin
+            }
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        function triggerLogin() {
+            msalInstance.loginRedirect({
+                scopes: ["openid", "profile"]
+            });
+        }
+
+        msalInstance.handleRedirectPromise()
+            .then(response => {
+                if (response) {
+                    console.log("Login success", response);
+
+                    document.getElementById("status").innerText =
+                        "Welcome " + response.account.username;
+
+                    // 🔥 Redirect after login
+                    window.location.href = "dashboard.html";
+                }
+            })
+            .catch(error => console.error(error));
+    </script>
+
+</body>
+</html>
