@@ -1,88 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIBERTY Dental Plan - Member Portal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LIBERTY Dental Plan - Member Portal</title>
 
-    <!-- Existing CSS (kept same) -->
-    <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/bootstrap-overrides.css">
-    <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/styles.css">
+  <!-- Your existing CSS (keep paths as in your repo) -->
+  <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/bootstrap-overrides.css">
+  <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/styles.css">
 
-    <!-- MSAL -->
-    <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
+  <!-- MSAL -->
+  <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
 
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            margin-top: 100px;
-        }
-        .login-box {
-            width: 300px;
-            margin: auto;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #0078d4;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 100px; }
+    .login-box { width: 320px; margin: auto; }
+    input { width: 100%; padding: 10px; margin: 8px 0; }
+    button {
+      width: 100%; padding: 12px;
+      background-color: #0078d4; color: #fff; border: none; cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { opacity: 0.9; }
+  </style>
 </head>
 
 <body>
+  <div class="login-box">
+    <h2>Member Login</h2>
 
-    <div class="login-box">
-        <h2>Member Login</h2>
+    <!-- Visual-only fields (External ID does NOT use these directly) -->
+    <input type="text" placeholder="Username">
+    <input type="password" placeholder="Password">
 
-        <!-- UI preserved (visual only) -->
-        <input type="text" placeholder="Username">
-        <input type="password" placeholder="Password">
+    <!-- This button WILL trigger MSAL -->
+    <button id="loginBtn">Login</button>
 
-        <button onclick="triggerLogin()">Login</button>
+    <p id="status"></p>
+  </div>
 
-        <p id="status"></p>
-    </div>
+  <script>
+    // ====== CONFIG: UPDATE THESE ======
+    const CLIENT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+    const TENANT_DOMAIN = "birlasoftdentalentra.onmicrosoft.com";
+    const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+    const USER_FLOW = "oidc"; // e.g. B2C_1_signin
+    const REDIRECT_URI = "https://<YOUR-USERNAME>.github.io/test/"; // exact match in Entra
 
-    <script>
-        const msalConfig = {
-            auth: {
-                clientId: "d1141f25-2729-4ea5-9892-f80db4205ebf",
-                authority: "https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505",
-                redirectUri: window.location.origin
-            }
-        };
+    // ====== MSAL SETUP ======
+    const msalConfig = {
+      auth: {
+        clientId: CLIENT_ID,
+        authority: `https://${TENANT_HOST}/${TENANT_DOMAIN}/${USER_FLOW}`,
+        redirectUri: REDIRECT_URI
+      },
+      cache: {
+        cacheLocation: "sessionStorage"
+      }
+    };
 
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-        function triggerLogin() {
-            msalInstance.loginRedirect({
-                scopes: ["openid", "profile"]
-            });
+    // ====== LOGIN CLICK (guaranteed binding) ======
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      console.log("Login clicked");
+      msalInstance.loginRedirect({
+        scopes: ["openid", "profile"]
+      });
+    });
+
+    // ====== HANDLE REDIRECT RESPONSE ======
+    msalInstance.handleRedirectPromise()
+      .then((response) => {
+        if (response && response.account) {
+          console.log("Login success:", response);
+          document.getElementById("status").innerText =
+            "Welcome " + response.account.username;
+
+          // Redirect after successful login
+          window.location.href = "dashboard.html";
         }
-
-        msalInstance.handleRedirectPromise()
-            .then(response => {
-                if (response) {
-                    console.log("Login success", response);
-
-                    document.getElementById("status").innerText =
-                        "Welcome " + response.account.username;
-
-                    // 🔥 Redirect after login
-                    window.location.href = "dashboard.html";
-                }
-            })
-            .catch(error => console.error(error));
-    </script>
-
+      })
+      .catch((error) => {
+        console.error("Auth error:", error);
+        document.getElementById("status").innerText =
+          "Authentication error. Check console (F12).";
+      });
+  </script>
 </body>
 </html>
