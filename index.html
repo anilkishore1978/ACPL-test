@@ -5,14 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LIBERTY Dental Plan - Member Portal</title>
 
-  <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/bootstrap-overrides.css">
-  <link rel="stylesheet" href="./LIBERTY Dental Plan's Member Portal - Signin_files/styles.css">
+  <link rel="stylesheet" href="./bootstrap-overrides.css">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./all.min.css">
 
   <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
 
   <style>
     :root{
-      --brand-blue:#3456ad;
+      --brand-blue:#3352a3;
       --brand-dark:#111b36;
       --panel:#e9e9ee;
       --info-bg:#dfe5f8;
@@ -23,9 +24,10 @@
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:Arial, sans-serif;
+      font-family:Roboto, Arial, sans-serif;
       background:#f7f7f7;
       color:#222;
+      overflow-x:hidden;
     }
 
     .topbar{
@@ -49,6 +51,7 @@
       justify-content:center;
       font-weight:bold;
       line-height:1;
+      border-radius:2px;
     }
 
     .page{
@@ -89,6 +92,7 @@
       background:var(--curve);
       transform:skew(-25deg);
       top:62px;
+      pointer-events:none;
     }
 
     .diag-left{left:6px}
@@ -103,15 +107,10 @@
       z-index:2;
     }
 
-    .logo{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-
     .logo img{
       height:42px;
       width:auto;
+      display:block;
     }
 
     .emergency-btn{
@@ -124,6 +123,7 @@
       font-size:16px;
       box-shadow:0 1px 2px rgba(0,0,0,.06);
       cursor:pointer;
+      white-space:nowrap;
     }
 
     .content{
@@ -256,6 +256,7 @@
     }
 
     .login-btn{margin-top:10px}
+
     .login-links{
       text-align:center;
       margin:38px 0 36px;
@@ -290,6 +291,51 @@
       color:#b42318;
     }
 
+    .footer-panel{
+      background:#2f343a;
+      color:#fff;
+      padding:28px 0;
+      margin-top:40px;
+      position:relative;
+      z-index:2;
+    }
+
+    .footer-panel .container{
+      max-width:1180px;
+      margin:0 auto;
+      padding:0 40px;
+    }
+
+    .footer-panel h5{
+      margin:0 0 14px;
+      font-size:18px;
+    }
+
+    .footer-panel ul{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    .footer-panel li{
+      margin:8px 0;
+    }
+
+    .footer-panel a{
+      color:#fff;
+      text-decoration:none;
+    }
+
+    .footer-panel a:hover{
+      text-decoration:underline;
+    }
+
+    .footer-logo{
+      max-width:190px;
+      height:auto;
+      display:block;
+    }
+
     @media (max-width: 1100px){
       .content{
         grid-template-columns:1fr;
@@ -322,6 +368,9 @@
       .topbar{
         font-size:14px;
         gap:8px;
+      }
+      .footer-panel .container{
+        padding:0 20px;
       }
     }
   </style>
@@ -406,64 +455,92 @@
         <div id="status"></div>
       </aside>
     </main>
+
+    <footer class="footer-panel">
+      <div class="container">
+        <div class="row align-items-start">
+          <div class="col-12 col-md-2 mb-3 d-flex justify-content-center align-items-start">
+            <a href="https://www.libertydentalplan.com/" target="_blank" rel="noreferrer">
+              <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan" class="footer-logo">
+            </a>
+          </div>
+
+          <div class="col-12 col-md-2 mb-3">
+            <h5>Explore</h5>
+            <ul>
+              <li><a href="https://www.libertydentalplan.com/Members/Welcome-to-Member-Services.aspx" target="_blank" rel="noreferrer">Members</a></li>
+              <li><a href="https://www.libertydentalplan.com/Providers/Providers-1.aspx" target="_blank" rel="noreferrer">Providers</a></li>
+              <li><a href="https://www.libertydentalplan.com/Agents-Brokers-1/" target="_blank" rel="noreferrer">Agents & Brokers</a></li>
+            </ul>
+          </div>
+
+          <div class="col-12 col-md-2 mb-3">
+            <h5>Connect</h5>
+            <ul>
+              <li><a href="https://www.libertydentalplan.com/Contact-Us.aspx" target="_blank" rel="noreferrer">Contact Us</a></li>
+              <li><a href="https://www.libertydentalplan.com/About-Liberty-Dental-Plan.aspx" target="_blank" rel="noreferrer">About Us</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
 
   <script>
-const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
-const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
+    const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+    const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+    const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+    const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
 
-const msalConfig = {
-  auth: {
-    clientId: CLIENT_ID,
-    authority: `https://${TENANT_HOST}/${TENANT_ID}`,
-    knownAuthorities: [TENANT_HOST],
-    redirectUri: REDIRECT_URI,
-    navigateToLoginRequestUrl: false
-  },
-  cache: {
-    cacheLocation: "sessionStorage",
-    storeAuthStateInCookie: false
-  }
-};
+    const msalConfig = {
+      auth: {
+        clientId: CLIENT_ID,
+        authority: `https://${TENANT_HOST}/${TENANT_ID}`,
+        knownAuthorities: [TENANT_HOST],
+        redirectUri: REDIRECT_URI,
+        navigateToLoginRequestUrl: false
+      },
+      cache: {
+        cacheLocation: "sessionStorage",
+        storeAuthStateInCookie: false
+      }
+    };
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-async function startApp() {
-  try {
-    const response = await msalInstance.handleRedirectPromise();
+    async function startApp() {
+      try {
+        const response = await msalInstance.handleRedirectPromise();
+        if (response && response.account) {
+          msalInstance.setActiveAccount(response.account);
+          window.location.href = "dashboard.html";
+          return;
+        }
 
-    if (response && response.account) {
-      msalInstance.setActiveAccount(response.account);
-      window.location.href = "dashboard.html";
-      return;
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+          msalInstance.setActiveAccount(accounts[0]);
+        }
+      } catch (e) {
+        console.error("MSAL redirect error:", e);
+        document.getElementById("status").innerText =
+          e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
+      }
     }
 
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      msalInstance.setActiveAccount(accounts[0]);
-    }
-  } catch (e) {
-    console.error("MSAL redirect error:", e);
-    document.getElementById("status").innerText =
-      e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
-  }
-}
+    startApp();
 
-startApp();
-
-document.getElementById("loginBtn").addEventListener("click", async () => {
-  try {
-    await msalInstance.loginRedirect({
-      scopes: ["openid", "profile"]
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      try {
+        await msalInstance.loginRedirect({
+          scopes: ["openid", "profile"]
+        });
+      } catch (e) {
+        console.error("MSAL login error:", e);
+        document.getElementById("status").innerText =
+          e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
+      }
     });
-  } catch (e) {
-    console.error("MSAL login error:", e);
-    document.getElementById("status").innerText =
-      e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
-  }
-});
-</script>
+  </script>
 </body>
 </html>
