@@ -409,65 +409,61 @@
   </div>
 
   <script>
-    const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-    const TENANT_DOMAIN = "birlasoftdentalentra.onmicrosoft.com";
-    const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-    const USER_FLOW = "LDFLOW";
-    const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
+const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
 
-    const msalConfig = {
-      auth: {
-        clientId: CLIENT_ID,
-        authority: `https://${TENANT_HOST}/${TENANT_DOMAIN}/${USER_FLOW}`,
-        redirectUri: REDIRECT_URI,
-        knownAuthorities: [TENANT_HOST]
-      },
-      cache: {
-        cacheLocation: "sessionStorage"
-      }
-    };
+const msalConfig = {
+  auth: {
+    clientId: CLIENT_ID,
+    authority: `https://${TENANT_HOST}/${TENANT_ID}`,
+    knownAuthorities: [TENANT_HOST],
+    redirectUri: REDIRECT_URI,
+    navigateToLoginRequestUrl: false
+  },
+  cache: {
+    cacheLocation: "sessionStorage",
+    storeAuthStateInCookie: false
+  }
+};
 
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
+const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const status = document.getElementById("status");
-      status.textContent = "Redirecting to secure sign-in...";
-      try {
-        await msalInstance.loginRedirect({
-          scopes: ["openid", "profile"]
-        });
-      } catch (error) {
-        console.error("Auth error:", error);
-        status.textContent = "Authentication error. Check console (F12).";
-      }
+async function startApp() {
+  try {
+    const response = await msalInstance.handleRedirectPromise();
+
+    if (response && response.account) {
+      msalInstance.setActiveAccount(response.account);
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length > 0) {
+      msalInstance.setActiveAccount(accounts[0]);
+    }
+  } catch (e) {
+    console.error("MSAL redirect error:", e);
+    document.getElementById("status").innerText =
+      e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
+  }
+}
+
+startApp();
+
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  try {
+    await msalInstance.loginRedirect({
+      scopes: ["openid", "profile"]
     });
-
-    msalInstance.handleRedirectPromise()
-      .then((response) => {
-        const status = document.getElementById("status");
-
-        if (response && response.account) {
-          status.textContent = "Welcome " + response.account.username;
-          window.location.href = "dashboard.html";
-          return;
-        }
-
-        const accounts = msalInstance.getAllAccounts();
-        if (accounts.length > 0) {
-          window.location.href = "dashboard.html";
-        }
-      })
-      .catch((error) => {
-        console.error("Auth error:", error);
-        document.getElementById("status").textContent =
-          "Authentication error. Check console (F12).";
-      });
-
-    document.querySelectorAll(".alert-close").forEach((el) => {
-      el.addEventListener("click", () => {
-        el.parentElement.style.display = "none";
-      });
-    });
-  </script>
+  } catch (e) {
+    console.error("MSAL login error:", e);
+    document.getElementById("status").innerText =
+      e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
+  }
+});
+</script>
 </body>
 </html>
