@@ -1,32 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Entra External ID Login</title>
-
+  <title>External ID Login</title>
   <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
-
-  <style>
-    body { font-family: Arial; background:#f4f6fb; display:flex; height:100vh; align-items:center; justify-content:center; }
-    .box { background:white; padding:30px; border-radius:10px; width:300px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
-    input { width:100%; padding:10px; margin:8px 0; }
-    button { width:100%; padding:10px; background:#3352a3; color:white; border:none; cursor:pointer; }
-    #status { margin-top:10px; font-size:14px; }
-  </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h3>Member Login</h3>
+<h3>Login</h3>
 
-  <!-- UI stays same -->
-  <input type="text" placeholder="Username">
-  <input type="password" placeholder="Password">
+<input placeholder="Username">
+<input type="password" placeholder="Password">
+<br><br>
 
-  <button id="loginBtn">Login</button>
-  <div id="status"></div>
-</div>
+<button id="loginBtn">Login</button>
+<div id="status"></div>
 
 <script>
 const msalConfig = {
@@ -43,37 +31,30 @@ const msalConfig = {
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-// Handle redirect
-msalInstance.handleRedirectPromise()
-.then(response => {
-  if (response) {
-    msalInstance.setActiveAccount(response.account);
-    document.getElementById("status").style.color = "green";
-    document.getElementById("status").innerText = "Login successful";
-    console.log(response);
-  }
-})
-.catch(err => {
-  document.getElementById("status").innerText = err.message;
-});
+// IMPORTANT: handle redirect fallback
+msalInstance.handleRedirectPromise();
 
-// Login
-document.getElementById("loginBtn").addEventListener("click", async () => {
+document.getElementById("loginBtn").onclick = async () => {
   try {
     const response = await msalInstance.loginPopup({
       scopes: ["openid", "profile", "email"]
     });
 
-    msalInstance.setActiveAccount(response.account);
-
-    document.getElementById("status").style.color = "green";
-    document.getElementById("status").innerText = "Login successful";
+    document.getElementById("status").innerText = "Login Success";
+    console.log(response);
 
   } catch (err) {
-    console.error(err);
-    document.getElementById("status").innerText = err.message;
+
+    // 🔥 fallback if popup blocked
+    if (err.errorCode === "block_nested_popups") {
+      await msalInstance.loginRedirect({
+        scopes: ["openid", "profile", "email"]
+      });
+    } else {
+      document.getElementById("status").innerText = err.message;
+    }
   }
-});
+};
 </script>
 
 </body>
