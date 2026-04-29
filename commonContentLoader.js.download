@@ -1,0 +1,105 @@
+$().ready(() => {
+  SetupFooterYear();
+  SetFontSizeDefaults();
+});
+
+function SetupFooterYear() {
+    const footerYearElement = document.getElementById("currentYear");
+    const footerYearmElement = document.getElementById("currentYearM");
+    const currentYear = new Date().getFullYear();
+    footerYearElement.innerHTML = currentYear;
+    footerYearmElement.innerHTML = currentYear;
+}
+
+function openPortalHelpGuide() {
+  window.open(
+    'https://www.libertydentalplan.com/Resources/Documents/Provider%20Portal%20Guide.pdf',
+      '_blank' 
+  );
+}
+
+function UpdateLanguageUrl(languageLocale) {
+  const currentUrl = window.location.href;
+  const url = new URL(currentUrl);
+  const supportedLocales = ["en", "es"];
+
+  if (supportedLocales.includes(languageLocale)) {
+    url.searchParams.set("ui_locales", languageLocale);
+    const newUrl = url.href;
+    window.location.href = newUrl;
+  }
+}
+
+/* Font-Size related  */
+let fontSize;
+let fontSizeIncrement;
+let fontSizeMin;
+let fontSizeMax;
+function SetFontSizeDefaults() {
+  fontSize = 1;
+  fontSizeIncrement = 0.1;
+  fontSizeMin = 0;
+  fontSizeMax = 1 + 5 * fontSizeIncrement;
+}
+function DecreaseFontSize() {
+  console.log("fontsize: ", fontSize);
+  const newFontSize = fontSize - fontSizeIncrement;
+  /* Rounded used to ensure the fontSize stays at 1 decimal place */
+  const roundedNewFontSize = Math.round(newFontSize * 10) / 10;
+  SetFontSize(roundedNewFontSize);
+}
+function IncreaseFontSize() {
+  const newFontSize = fontSize + fontSizeIncrement;
+  /* Rounded used to ensure the fontSize stays at 1 decimal place */
+  const roundedNewFontSize = Math.round(newFontSize * 10) / 10;
+  SetFontSize(roundedNewFontSize);
+}
+function SetFontSize(newFontSize) {
+  if (
+    +newFontSize === newFontSize &&
+    newFontSize >= fontSizeMin &&
+    newFontSize <= fontSizeMax
+  ) {
+    const htmlElement = window.document.getElementsByTagName("html")[0];
+
+    fontSize = +newFontSize;
+    htmlElement.style.fontSize = fontSize + "rem";
+    SetFontButtonsState();
+  }
+}
+function SetFontButtonsState() {
+  const decrease = window.document.getElementById("fontsize-decrease");
+  const reset = window.document.getElementById("fontsize-reset");
+  const increase = window.document.getElementById("fontsize-increase");
+  SetButtonEnabled(decrease, fontSize > fontSizeMin);
+  SetButtonEnabled(reset, fontSize !== 1);
+  SetButtonEnabled(increase, fontSize < fontSizeMax);
+
+  function SetButtonEnabled(element, isEnabled) {
+    if (isEnabled === true) {
+      element.classList.remove("disabled");
+      decrease.tabIndex = undefined;
+    } else {
+      element.classList.add("disabled");
+      decrease.tabIndex = -1;
+    }
+  }
+}
+
+$(document).ready(function () {
+  $(".footer-panel h5").on("click", function () {
+    $(this).next("ul").toggleClass("menu-open");
+    $(this).toggleClass("open");
+  });
+  if ($("#message_label").text() === "Your Session has timed out, requesting you to start registration again.") {
+        const hrefValue = document.querySelector('.logo-container a')?.getAttribute('href');
+        console.log(hrefValue);    
+        // Create a hyperlink element
+        var hyperlink = $("<a></a>")
+            .attr("href", hrefValue) // Set the hyperlink URL
+            .text(" Click here"); // Set the hyperlink text
+
+        // Append the hyperlink inside the label with the specified ID
+        $("#message_label").append(hyperlink);
+    }
+});
