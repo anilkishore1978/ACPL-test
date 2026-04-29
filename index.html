@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LIBERTY Dental Plan - Member Portal</title>
+  <title>LIBERTY Dental Plan - Native Authentication</title>
   <link rel="stylesheet" href="./bootstrap-overrides.css" />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="stylesheet" href="./all.min.css" />
@@ -17,6 +17,7 @@
       --curve: #dcecf7;
       --error: #b42318;
       --success: #1d6f42;
+      --muted: #5a6378;
     }
     * { box-sizing: border-box; }
     body {
@@ -99,8 +100,8 @@
       max-width: 1180px;
       margin: 40px auto 0;
       display: grid;
-      grid-template-columns: minmax(580px, 1fr) 290px;
-      gap: 70px;
+      grid-template-columns: minmax(580px, 1fr) 360px;
+      gap: 48px;
       align-items: start;
       position: relative;
       z-index: 2;
@@ -153,30 +154,40 @@
       color: #1f2433;
       max-width: 610px;
     }
-    .login-panel {
+    .auth-panel {
       background: var(--panel);
-      padding: 28px 34px 36px;
-      min-height: 518px;
+      padding: 28px 28px 32px;
+      min-height: 580px;
     }
-    .login-panel h2 {
-      margin: 0 0 18px;
+    .auth-panel h2 {
+      margin: 0 0 10px;
       text-align: center;
       font-size: 25px;
       font-weight: 700;
       color: #333;
     }
-    .native-note {
-      margin: 0 0 24px;
+    .auth-note {
+      margin: 0 0 18px;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .config-box {
+      background: #fff;
+      border: 1px solid #ccd3e0;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: #42506a;
       line-height: 1.45;
-      color: #4d5566;
     }
     .tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
     .tab-btn {
       height: 38px;
@@ -195,21 +206,21 @@
     }
     .auth-view { display: none; }
     .auth-view.active { display: block; }
-    .field { margin-bottom: 18px; text-align: left; }
+    .field { margin-bottom: 16px; text-align: left; }
     .field label {
       display: block;
-      margin-bottom: 10px;
-      font-size: 17px;
+      margin-bottom: 8px;
+      font-size: 15px;
       font-weight: 700;
       color: #333;
     }
-    .field input {
+    .field input, .field select {
       width: 100%;
-      height: 38px;
+      height: 40px;
       border: 1px solid #909090;
       border-radius: 3px;
       padding: 8px 12px;
-      font-size: 16px;
+      font-size: 15px;
       background: #fff;
     }
     .radio-group {
@@ -232,55 +243,45 @@
       height: auto;
       margin: 0;
     }
-    .login-btn, .register-btn {
+    .primary-btn, .secondary-btn {
       width: 100%;
-      height: 36px;
-      border: none;
+      height: 38px;
       border-radius: 3px;
-      background: var(--brand-blue);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .secondary-btn {
-      width: 100%;
-      height: 36px;
-      border: 1px solid #8fa3cf;
-      border-radius: 3px;
-      background: #fff;
-      color: var(--brand-blue);
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
+    }
+    .primary-btn {
+      border: none;
+      background: var(--brand-blue);
+      color: #fff;
+    }
+    .secondary-btn {
+      border: 1px solid #8fa3cf;
+      background: #fff;
+      color: var(--brand-blue);
       margin-top: 10px;
     }
     .helper-text {
-      font-size: 13px;
-      line-height: 1.45;
+      font-size: 12px;
+      line-height: 1.5;
       color: #555;
       margin-top: 6px;
     }
     .login-links {
       text-align: center;
-      margin: 28px 0 26px;
-      line-height: 1.5;
+      margin: 24px 0 18px;
+      line-height: 1.6;
     }
     .login-links a {
       color: #4b4b4b;
       text-decoration: none;
-      font-size: 17px;
+      font-size: 15px;
     }
     .login-links a:hover { text-decoration: underline; }
-    .new-member {
-      text-align: center;
-      margin-top: 18px;
-    }
-    .new-member h3 {
-      margin: 0 0 18px;
-      font-size: 22px;
-      color: #333;
-      font-weight: 700;
+    .mini-divider {
+      margin: 20px 0 14px;
+      border-top: 1px solid #cad2df;
     }
     #status {
       min-height: 22px;
@@ -313,11 +314,9 @@
       padding: 16px 0 24px;
       font-size: 14px;
     }
-    .social-icons { gap: 16px; align-items: center; }
-    .copyright-text { font-size: 14px; }
     @media (max-width: 1100px) {
       .content { grid-template-columns: 1fr; gap: 32px; }
-      .login-panel { max-width: 420px; margin: 0 auto; min-height: auto; }
+      .auth-panel { max-width: 460px; margin: 0 auto; min-height: auto; }
       .diag-right { display: none; }
     }
     @media (max-width: 768px) {
@@ -347,7 +346,7 @@
 
     <header class="header">
       <div class="logo">
-        <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan" class="portal-logo" />
+        <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan" />
       </div>
       <div>
         <button class="emergency-btn" type="button">I have a Dental Emergency</button>
@@ -381,9 +380,18 @@
         </div>
       </section>
 
-      <aside class="login-panel">
-        <h2>Member Login</h2>
-        <p class="native-note">This page is prepared as a native-authentication style UI shell. Replace the simulated submit handlers with your app's Microsoft Entra External ID native authentication SDK or API calls.</p>
+      <aside class="auth-panel">
+        <h2>Member Access</h2>
+        <p class="auth-note">Prepared for Microsoft Entra External ID native authentication using your tenant and app settings. Replace the simulated handlers below with your application's native authentication SDK or API calls.</p>
+
+        <div class="config-box">
+          <strong>Configured values</strong><br />
+          Tenant Subdomain: <code>birlasoftdentalentra</code><br />
+          Tenant ID: <code>36090fda-8a83-4040-8c58-7cf784511505</code><br />
+          Client ID: <code>d1141f25-2729-4ea5-9892-f80db4205ebf</code><br />
+          Flow: <code>LDFLOW</code><br />
+          Sign-in Method: <code>Email with password</code>
+        </div>
 
         <div class="tabs">
           <button class="tab-btn active" type="button" data-view="signinView">Sign In</button>
@@ -392,28 +400,36 @@
 
         <section id="signinView" class="auth-view active">
           <div class="field">
-            <label for="signinEmail">Email</label>
-            <input id="signinEmail" type="email" placeholder="Email" autocomplete="username" />
+            <label for="signinEmail">Email Address</label>
+            <input id="signinEmail" type="email" placeholder="Email Address" autocomplete="username" />
           </div>
           <div class="field">
             <label for="signinPassword">Password</label>
             <input id="signinPassword" type="password" placeholder="Password" autocomplete="current-password" />
           </div>
-          <button class="login-btn" id="signInBtn" type="button">Sign In</button>
+          <button class="primary-btn" id="signInBtn" type="button">Sign In</button>
           <div class="login-links">
             <a href="#" onclick="return false;">Forgot Password?</a><br />
             <a href="#" onclick="return false;">Forgot Username?</a>
           </div>
-          <div class="new-member">
-            <h3>New Member?</h3>
-            <button class="secondary-btn" type="button" id="switchToRegister">Create Account</button>
-          </div>
+          <div class="mini-divider"></div>
+          <button class="secondary-btn" id="switchToRegister" type="button">Create Account</button>
         </section>
 
         <section id="registerView" class="auth-view">
           <div class="field">
-            <label for="registerEmail">Email</label>
-            <input id="registerEmail" type="email" placeholder="Email" autocomplete="email" />
+            <label for="registerEmail">Email Address</label>
+            <input id="registerEmail" type="email" placeholder="Email Address" autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="countryRegion">Country/Region</label>
+            <select id="countryRegion">
+              <option value="">Select Country/Region</option>
+              <option value="US">United States</option>
+              <option value="IN">India</option>
+              <option value="SA">Saudi Arabia</option>
+              <option value="AE">United Arab Emirates</option>
+            </select>
           </div>
           <div class="field">
             <label for="registerPassword">Password</label>
@@ -433,9 +449,9 @@
           <div class="field hidden" id="memberIdField">
             <label for="memberId">Member ID</label>
             <input id="memberId" type="text" placeholder="Enter Member ID" />
-            <div class="helper-text">If you select Yes, your app should validate Member ID with your Liberty API before completing registration.</div>
+            <div class="helper-text">If Existing Member is Yes, validate Member ID against your Liberty member validation API before completing sign-up. Your uploaded Postman collection shows the backend expects a MemberNumber payload for this validation step. [file:191]</div>
           </div>
-          <button class="register-btn" id="registerBtn" type="button">Register</button>
+          <button class="primary-btn" id="registerBtn" type="button">Register</button>
           <button class="secondary-btn" id="switchToSignIn" type="button">Back to Sign In</button>
         </section>
 
@@ -485,19 +501,18 @@
           </div>
           <div class="col-12 col-md-2 mb-3">
             <h5>Follow</h5>
-            <ul class="social-icons d-flex">
-              <li><a href="https://www.instagram.com/libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-instagram" style="color: white;"></i></a></li>
-              <li><a href="https://www.facebook.com/libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-facebook-f" style="color: white;"></i></a></li>
-              <li><a href="https://www.youtube.com/@libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-youtube" style="color: white;"></i></a></li>
+            <ul class="d-flex" style="gap:16px;">
+              <li><a href="https://www.instagram.com/libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-instagram" style="color:white;"></i></a></li>
+              <li><a href="https://www.facebook.com/libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-facebook-f" style="color:white;"></i></a></li>
+              <li><a href="https://www.youtube.com/@libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-youtube" style="color:white;"></i></a></li>
             </ul>
           </div>
         </div>
-
         <div class="row footer-black">
           <div class="col-12 col-md-3 d-flex justify-content-center align-items-center">
-            <span class="copyright-text">© <span id="currentYear">2026</span> LIBERTY Dental Plan</span>
+            <span>© <span id="currentYear">2026</span> LIBERTY Dental Plan</span>
           </div>
-          <div class="col-12 col-md-9 footer-links">
+          <div class="col-12 col-md-9">
             <span class="mx-4"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Legal/Privacy-Statement/Patient-Privacy-1.aspx" target="_blank" rel="noreferrer noopener">Privacy Notice</a></span>
             <span class="mx-3"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Legal/Sitemap.aspx" target="_blank" rel="noreferrer noopener">Site Map</a></span>
             <span class="mx-3"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Legal/Grievances.aspx" target="_blank" rel="noreferrer noopener">GRIEVANCE FORMS</a></span>
@@ -509,6 +524,15 @@
   </div>
 
   <script>
+    const NATIVE_AUTH_CONFIG = {
+      tenantSubdomain: 'birlasoftdentalentra',
+      tenantId: '36090fda-8a83-4040-8c58-7cf784511505',
+      clientId: 'd1141f25-2729-4ea5-9892-f80db4205ebf',
+      userFlow: 'LDFLOW',
+      signInMethod: 'emailWithPassword',
+      memberValidationEndpoint: 'https://dev-api.libertydentalplan.com/memberauthenticationapi/memberauthentication/membernumber'
+    };
+
     const tabs = document.querySelectorAll('.tab-btn');
     const views = document.querySelectorAll('.auth-view');
     const status = document.getElementById('status');
@@ -523,10 +547,7 @@
       status.className = '';
     }
 
-    tabs.forEach(btn => {
-      btn.addEventListener('click', () => setView(btn.dataset.view));
-    });
-
+    tabs.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
     document.getElementById('switchToRegister').addEventListener('click', () => setView('registerView'));
     document.getElementById('switchToSignIn').addEventListener('click', () => setView('signinView'));
 
@@ -540,30 +561,43 @@
     memberRadios.forEach(radio => radio.addEventListener('change', toggleMemberId));
     toggleMemberId();
 
-    document.getElementById('signInBtn').addEventListener('click', () => {
+    async function validateMemberId(memberId) {
+      return {
+        ok: true,
+        message: 'Member validation placeholder. Replace with your secure server-side call or native app integration.'
+      };
+    }
+
+    document.getElementById('signInBtn').addEventListener('click', async () => {
       const email = document.getElementById('signinEmail').value.trim();
       const password = document.getElementById('signinPassword').value;
 
       if (!email || !password) {
-        status.textContent = 'Please enter both email and password.';
+        status.textContent = 'Please enter both email address and password.';
         status.className = '';
         return;
       }
 
-      status.textContent = 'Native authentication sign-in placeholder: replace this with your app SDK/API call to Entra External ID.';
+      status.textContent = [
+        'Sign-in payload ready.',
+        'Tenant Subdomain: ' + NATIVE_AUTH_CONFIG.tenantSubdomain,
+        'Client ID: ' + NATIVE_AUTH_CONFIG.clientId,
+        'Next step: call your native authentication sign-in API/SDK with email and password.'
+      ].join('\n');
       status.className = 'success';
     });
 
-    document.getElementById('registerBtn').addEventListener('click', () => {
+    document.getElementById('registerBtn').addEventListener('click', async () => {
       const email = document.getElementById('registerEmail').value.trim();
+      const countryRegion = document.getElementById('countryRegion').value;
       const password = document.getElementById('registerPassword').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const selected = document.querySelector('input[name="existingMember"]:checked');
       const existingMember = selected ? selected.value : 'no';
       const memberId = memberIdInput.value.trim();
 
-      if (!email || !password || !confirmPassword) {
-        status.textContent = 'Please complete email, password, and confirm password.';
+      if (!email || !countryRegion || !password || !confirmPassword) {
+        status.textContent = 'Please complete email address, country/region, password, and confirm password.';
         status.className = '';
         return;
       }
@@ -580,7 +614,35 @@
         return;
       }
 
-      status.textContent = 'Native authentication registration placeholder:\n1. Validate Member ID if needed.\n2. Call Entra External ID native sign-up API/SDK from your app.';
+      if (existingMember === 'yes') {
+        const validation = await validateMemberId(memberId);
+        if (!validation.ok) {
+          status.textContent = validation.message || 'Member ID validation failed.';
+          status.className = '';
+          return;
+        }
+      }
+
+      const signUpPayload = {
+        tenantSubdomain: NATIVE_AUTH_CONFIG.tenantSubdomain,
+        clientId: NATIVE_AUTH_CONFIG.clientId,
+        userFlow: NATIVE_AUTH_CONFIG.userFlow,
+        attributes: {
+          email,
+          countryRegion,
+          existingMember,
+          memberId
+        }
+      };
+
+      status.textContent = [
+        'Registration payload ready for native authentication.',
+        'Flow: ' + signUpPayload.userFlow,
+        'Email: ' + signUpPayload.attributes.email,
+        'Country/Region: ' + signUpPayload.attributes.countryRegion,
+        'Existing Member: ' + signUpPayload.attributes.existingMember,
+        'Next step: map these fields to the exact Entra native authentication sign-up API attributes in your app code.'
+      ].join('\n');
       status.className = 'success';
     });
   </script>
