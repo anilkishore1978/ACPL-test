@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LIBERTY Dental Plan - Registration</title>
+
+  <link rel="stylesheet" href="./bootstrap-overrides.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./all.min.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: #ffffff;
+      color: #333;
+      font-family: "Roboto", sans-serif;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background: #ffffff;
+    }
+
+    .portal-card {
+      width: 100%;
+      max-width: 760px;
+      background: #fff;
+      border: 1px solid #d8dde6;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .brand-top {
+      text-align: center;
+      padding: 24px 24px 8px;
+      background: #fff;
+    }
+
+    .brand-top img {
+      max-width: 240px;
+      height: auto;
+      margin: 0 auto 10px;
+      display: block;
+    }
+
+    .brand-subtitle {
+      font-size: 14px;
+      color: #494949;
+      margin: 0;
+    }
+
+    .self_asserted_signup_container {
+      margin-bottom: 0 !important;
+      color: #333;
+    }
+
+    #api {
+      padding: 24px;
+    }
+
+    .register-intro {
+      text-align: center;
+      color: #494949;
+      padding-bottom: 18px;
+    }
+
+    .back-login {
+      text-align: center;
+      padding: 0 24px 24px;
+    }
+
+    .back-login a {
+      color: #3352a3;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-login a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-brand {
+      text-align: center;
+      padding: 16px 24px 24px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .footer-brand img {
+      max-width: 180px;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+    }
+
+    #attributeVerification {
+      overflow: visible;
+    }
+
+    #attributeList ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    #attributeList ul li {
+      margin-bottom: 18px;
+    }
+
+    .attrEntry {
+      margin-bottom: 14px;
+    }
+
+    .attrEntry label {
+      display: block;
+      text-align: left;
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .attrEntry input,
+    .attrEntry select {
+      width: 100%;
+    }
+
+    .helpText,
+    .error.itemLevel,
+    .error.pageLevel,
+    .verificationInfoText,
+    .verificationSuccessText,
+    .verificationErrorText {
+      margin-top: 6px;
+    }
+
+    .buttons {
+      margin-top: 24px;
+    }
+
+    .buttons button {
+      margin-bottom: 8px;
+    }
+
+    .required-note {
+      text-align: left;
+      color: #494949;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    .required-note .star {
+      color: #dc3545;
+      font-weight: 700;
+    }
+
+    @media (max-width: 576px) {
+      #api {
+        padding: 18px;
+      }
+
+      .brand-top {
+        padding: 20px 16px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="portal-card">
+      <div class="brand-top">
+        <img src="./C-Stacked-Horizontal.svg" alt="LIBERTY Dental Plan Logo" />
+        <p class="brand-subtitle">Member Portal Registration</p>
+      </div>
+
+      <div class="self_asserted_signup_container">
+        <div class="heading">
+          <h1>Register for your account</h1>
+        </div>
+
+        <div id="api" data-name="SelfAsserted">
+          <div class="register-intro">
+            Follow these steps to sign up for the My Compass self-service portal.
+          </div>
+
+          <div class="required-note">
+            <span class="star">*</span> Required fields
+          </div>
+
+          <form id="attributeVerification" action="JavaScript:void(0);">
+            <div id="passwordEntryMismatch" class="error pageLevel" style="display:none;" aria-hidden="true"></div>
+            <div id="requiredFieldMissing" class="error pageLevel" style="display:none;" aria-hidden="true"></div>
+            <div id="fieldIncorrect" class="error pageLevel" style="display:none;" aria-hidden="true"></div>
+            <div id="claimVerificationServerError" class="error pageLevel" style="display:none;" aria-hidden="true"></div>
+
+            <div id="attributeList" class="attr">
+              <ul>
+                <li>
+                  <div class="attrEntry">
+                    <label id="givenName_label" for="givenName">First Name</label>
+                    <input id="givenName" name="givenName" type="text" autocomplete="given-name" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="surname_label" for="surname">Last Name</label>
+                    <input id="surname" name="surname" type="text" autocomplete="family-name" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="email_label" for="email">Email Address</label>
+                    <input id="email" name="email" type="email" autocomplete="email" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="signInName_label" for="signInName">Username</label>
+                    <input id="signInName" name="signInName" type="text" autocomplete="username" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="memberNumber_label" for="memberNumber">Member Number</label>
+                    <input id="memberNumber" name="memberNumber" type="text" />
+                    <div class="helpText">Enter your member number exactly as it appears on your card.</div>
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="memberZipCode_label" for="memberZipCode">ZIP Code</label>
+                    <input id="memberZipCode" name="memberZipCode" type="text" inputmode="numeric" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="memberDateOfBirth_label" for="memberDateOfBirth">Date of Birth</label>
+                    <input id="memberDateOfBirth" name="memberDateOfBirth" type="text" placeholder="MMDDYYYY" />
+                    <div class="helpText">Please enter valid date in MMDDYYYY format.</div>
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="newPassword_label" for="newPassword">Password</label>
+                    <input id="newPassword" name="newPassword" type="password" autocomplete="new-password" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+
+                <li>
+                  <div class="attrEntry">
+                    <label id="reenterPassword_label" for="reenterPassword">Confirm Password</label>
+                    <input id="reenterPassword" name="reenterPassword" type="password" autocomplete="new-password" />
+                    <div class="error itemLevel" style="display:none;"></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="buttons">
+              <button id="continue" type="submit">Next</button>
+              <button id="cancel" type="button">Cancel</button>
+            </div>
+
+            <div class="verifying-modal">
+              <div id="verifying_blurb"></div>
+            </div>
+          </form>
+        </div>
+
+        <div class="back-login">
+          <a href="./index.html">Back to Login</a>
+        </div>
+      </div>
+
+      <div class="footer-brand">
+        <img src="./C-Stacked-Horizontal.svg" alt="LIBERTY Dental Plan Footer Logo" />
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function hideErrorMessages() {
+      [
+        "passwordEntryMismatch",
+        "requiredFieldMissing",
+        "fieldIncorrect",
+        "claimVerificationServerError"
+      ].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.display = "none";
+          el.setAttribute("aria-hidden", "true");
+          el.textContent = "";
+        }
+      });
+    }
+
+    function showPageError(id, message) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = message;
+        el.style.display = "block";
+        el.setAttribute("aria-hidden", "false");
+      }
+    }
+
+    function validateData() {
+      hideErrorMessages();
+
+      const requiredFields = [
+        "givenName",
+        "surname",
+        "email",
+        "signInName",
+        "memberNumber",
+        "memberZipCode",
+        "memberDateOfBirth",
+        "newPassword",
+        "reenterPassword"
+      ];
+
+      let valid = true;
+
+      requiredFields.forEach(function (id) {
+        const el = document.getElementById(id);
+        if (!el || !el.value.trim()) {
+          valid = false;
+          if (el) {
+            el.classList.add("highlightError");
+          }
+        } else {
+          el.classList.remove("highlightError");
+        }
+      });
+
+      const dob = document.getElementById("memberDateOfBirth").value.trim();
+      if (dob && !/^(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])\d{4}$/.test(dob)) {
+        valid = false;
+        document.getElementById("memberDateOfBirth").classList.add("highlightError");
+        showPageError("fieldIncorrect", "Please enter a valid date in MMDDYYYY format.");
+        return false;
+      }
+
+      const pwd = document.getElementById("newPassword").value;
+      const confirmPwd = document.getElementById("reenterPassword").value;
+
+      if (pwd !== confirmPwd) {
+        valid = false;
+        document.getElementById("newPassword").classList.add("highlightError");
+        document.getElementById("reenterPassword").classList.add("highlightError");
+        showPageError("passwordEntryMismatch", "The password entry fields do not match.");
+        return false;
+      }
+
+      if (!valid) {
+        showPageError("requiredFieldMissing", "A required field is missing. Please fill out all required fields and try again.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function collectData() {
+      return {
+        givenName: document.getElementById("givenName").value.trim(),
+        surname: document.getElementById("surname").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        signInName: document.getElementById("signInName").value.trim(),
+        memberNumber: document.getElementById("memberNumber").value.trim(),
+        memberZipCode: document.getElementById("memberZipCode").value.trim(),
+        memberDateOfBirth: document.getElementById("memberDateOfBirth").value.trim(),
+        newPassword: document.getElementById("newPassword").value,
+        reenterPassword: document.getElementById("reenterPassword").value
+      };
+    }
+
+    function sendResponse(data) {
+      console.log("Captured registration data:", data);
+      document.getElementById("verifying_blurb").textContent =
+        "Information captured successfully. Connect this function to your existing backend registration endpoint.";
+      alert("Registration data captured. Replace sendResponse() with your existing backend submit call.");
+    }
+
+    function verify() {
+      if (!validateData()) {
+        return false;
+      }
+
+      const data = collectData();
+      sendResponse(data);
+      return true;
+    }
+
+    document.getElementById("attributeVerification").addEventListener("submit", function (e) {
+      e.preventDefault();
+      verify();
+    });
+
+    document.getElementById("continue").addEventListener("click", function (e) {
+      e.preventDefault();
+      verify();
+    });
+
+    document.getElementById("cancel").addEventListener("click", function () {
+      window.location.href = "./index.html";
+    });
+  </script>
+</body>
+</html>
