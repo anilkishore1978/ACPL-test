@@ -1,49 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Entra External ID Login Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <title>Entra External ID Login</title>
 
   <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
 
   <style>
-    body {
-      font-family: Arial;
-      background: #f4f6fb;
-      display: flex;
-      height: 100vh;
-      align-items: center;
-      justify-content: center;
-    }
-    .box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      width: 320px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #3352a3;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    #status {
-      margin-top: 10px;
-      font-size: 14px;
-    }
+    body { font-family: Arial; background:#f4f6fb; display:flex; height:100vh; align-items:center; justify-content:center; }
+    .box { background:white; padding:30px; border-radius:10px; width:300px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+    input { width:100%; padding:10px; margin:8px 0; }
+    button { width:100%; padding:10px; background:#3352a3; color:white; border:none; cursor:pointer; }
+    #status { margin-top:10px; font-size:14px; }
   </style>
 </head>
 
@@ -53,74 +21,59 @@
   <h3>Member Login</h3>
 
   <!-- UI stays same -->
-  <input id="username" type="text" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
+  <input type="text" placeholder="Username">
+  <input type="password" placeholder="Password">
 
   <button id="loginBtn">Login</button>
-
   <div id="status"></div>
 </div>
 
 <script>
-  // ✅ YOUR CONFIG (already filled)
-  const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-  const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
-  const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-  const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
+const msalConfig = {
+  auth: {
+    clientId: "d1141f25-2729-4ea5-9892-f80db4205ebf",
+    authority: "https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505",
+    knownAuthorities: ["birlasoftdentalentra.ciamlogin.com"],
+    redirectUri: "https://anilkishore1978.github.io/ACPL-test/"
+  },
+  cache: {
+    cacheLocation: "sessionStorage"
+  }
+};
 
-  // 🔴 IMPORTANT: UPDATE THIS POLICY NAME
-  const POLICY = "B2C_1_SignInSignUp"; // <-- change if different
+const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-  const msalConfig = {
-    auth: {
-      clientId: CLIENT_ID,
-      authority: `https://${TENANT_HOST}/${TENANT_ID}/${POLICY}`,
-      knownAuthorities: [TENANT_HOST],
-      redirectUri: REDIRECT_URI,
-      navigateToLoginRequestUrl: false
-    },
-    cache: {
-      cacheLocation: "sessionStorage"
-    }
-  };
+// Handle redirect
+msalInstance.handleRedirectPromise()
+.then(response => {
+  if (response) {
+    msalInstance.setActiveAccount(response.account);
+    document.getElementById("status").style.color = "green";
+    document.getElementById("status").innerText = "Login successful";
+    console.log(response);
+  }
+})
+.catch(err => {
+  document.getElementById("status").innerText = err.message;
+});
 
-  const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-  // Handle redirect (important)
-  msalInstance.handleRedirectPromise()
-    .then((response) => {
-      if (response && response.account) {
-        msalInstance.setActiveAccount(response.account);
-        document.getElementById("status").style.color = "green";
-        document.getElementById("status").innerText = "Login successful!";
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById("status").innerText = err.message;
+// Login
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  try {
+    const response = await msalInstance.loginPopup({
+      scopes: ["openid", "profile", "email"]
     });
 
-  // Login button
-  document.getElementById("loginBtn").addEventListener("click", async (e) => {
-    e.preventDefault();
+    msalInstance.setActiveAccount(response.account);
 
-    try {
-      const response = await msalInstance.loginPopup({
-        scopes: ["openid", "profile", "email"]
-      });
+    document.getElementById("status").style.color = "green";
+    document.getElementById("status").innerText = "Login successful";
 
-      msalInstance.setActiveAccount(response.account);
-
-      document.getElementById("status").style.color = "green";
-      document.getElementById("status").innerText = "Login successful!";
-
-      console.log("User:", response.account);
-
-    } catch (error) {
-      console.error(error);
-      document.getElementById("status").innerText = error.message;
-    }
-  });
+  } catch (err) {
+    console.error(err);
+    document.getElementById("status").innerText = err.message;
+  }
+});
 </script>
 
 </body>
