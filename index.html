@@ -2,649 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LIBERTY Dental Plan - Native Authentication</title>
-  <link rel="stylesheet" href="./bootstrap-overrides.css" />
-  <link rel="stylesheet" href="./styles.css" />
-  <link rel="stylesheet" href="./all.min.css" />
+  <title>Entra External ID Login Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
+
   <style>
-    :root {
-      --brand-blue: #3352a3;
-      --brand-dark: #111b36;
-      --panel: #e9e9ee;
-      --info-bg: #dfe5f8;
-      --warn-bg: #f2e7e7;
-      --curve: #dcecf7;
-      --error: #b42318;
-      --success: #1d6f42;
-      --muted: #5a6378;
-    }
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: Roboto, Arial, sans-serif;
-      background: #f7f7f7;
-      color: #222;
-      overflow-x: hidden;
-    }
-    .topbar {
-      height: 45px;
-      background: var(--brand-blue);
-      color: #fff;
+      font-family: Arial;
+      background: #f4f6fb;
       display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 0 18px;
-      gap: 12px;
-      font-size: 16px;
-    }
-    .topbar .icon-box {
-      width: 22px;
-      height: 22px;
-      border: 1px solid rgba(255,255,255,.6);
-      display: inline-flex;
+      height: 100vh;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      line-height: 1;
-      border-radius: 2px;
     }
-    .page {
-      position: relative;
-      min-height: calc(100vh - 45px);
-      overflow: hidden;
-      background: #f7f7f7;
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 320px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
-    .curve-left, .curve-right {
-      position: absolute;
-      border: 22px solid var(--curve);
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: .95;
-    }
-    .curve-left { width: 760px; height: 760px; left: -470px; bottom: -250px; }
-    .curve-right { width: 980px; height: 980px; right: -430px; bottom: -420px; }
-    .diag-left, .diag-right {
-      position: absolute;
-      width: 20px;
-      height: 92px;
-      background: var(--curve);
-      transform: skew(-25deg);
-      top: 62px;
-      pointer-events: none;
-    }
-    .diag-left { left: 6px; }
-    .diag-right { right: 398px; }
-    .header {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      padding: 12px 95px 8px;
-      position: relative;
-      z-index: 2;
-    }
-    .logo img { height: 42px; width: auto; display: block; }
-    .emergency-btn {
-      background: #fff;
-      border: 1px solid #9fb3d6;
-      color: #4f4a3f;
-      border-radius: 8px;
-      padding: 16px 28px;
-      font-weight: 700;
-      font-size: 16px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.06);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .content {
-      max-width: 1180px;
-      margin: 40px auto 0;
-      display: grid;
-      grid-template-columns: minmax(580px, 1fr) 360px;
-      gap: 48px;
-      align-items: start;
-      position: relative;
-      z-index: 2;
-      padding: 0 40px 40px;
-    }
-    .alerts { max-width: 650px; margin-bottom: 28px; }
-    .alert {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-radius: 6px;
-      padding: 14px 16px;
-      margin-bottom: 30px;
-      color: #31487d;
-      font-size: 18px;
-      line-height: 1.45;
-    }
-    .alert.info { background: var(--info-bg); }
-    .alert.warn { background: var(--warn-bg); color: #334a80; }
-    .alert-left {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding-right: 10px;
-    }
-    .alert-left img { width: 22px; height: 22px; margin-top: 2px; }
-    .alert-close {
-      font-size: 22px;
-      color: #8d8d8d;
-      cursor: pointer;
-      line-height: 1;
-      user-select: none;
-    }
-    .hero {
-      max-width: 650px;
-      text-align: center;
-      padding-top: 28px;
-    }
-    .hero h1 {
-      font-size: 62px;
-      line-height: 1.02;
-      margin: 0 0 24px;
-      color: var(--brand-dark);
-      font-weight: 800;
-    }
-    .hero p {
-      font-size: 24px;
-      line-height: 1.45;
-      margin: 0 auto 26px;
-      color: #1f2433;
-      max-width: 610px;
-    }
-    .auth-panel {
-      background: var(--panel);
-      padding: 28px 28px 32px;
-      min-height: 580px;
-    }
-    .auth-panel h2 {
-      margin: 0 0 10px;
-      text-align: center;
-      font-size: 25px;
-      font-weight: 700;
-      color: #333;
-    }
-    .auth-note {
-      margin: 0 0 18px;
-      text-align: center;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-    .config-box {
-      background: #fff;
-      border: 1px solid #ccd3e0;
-      border-radius: 4px;
-      padding: 12px;
-      margin-bottom: 18px;
-      font-size: 12px;
-      color: #42506a;
-      line-height: 1.45;
-    }
-    .tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-    .tab-btn {
-      height: 38px;
-      border: 1px solid #7f92c3;
-      border-radius: 3px;
-      background: #fff;
-      color: var(--brand-blue);
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .tab-btn.active {
-      background: var(--brand-blue);
-      color: #fff;
-      border-color: var(--brand-blue);
-    }
-    .auth-view { display: none; }
-    .auth-view.active { display: block; }
-    .field { margin-bottom: 16px; text-align: left; }
-    .field label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #333;
-    }
-    .field input, .field select {
+    input {
       width: 100%;
-      height: 40px;
-      border: 1px solid #909090;
-      border-radius: 3px;
-      padding: 8px 12px;
-      font-size: 15px;
-      background: #fff;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
-    .radio-group {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-      flex-wrap: wrap;
-      padding-top: 2px;
-    }
-    .radio-group label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      font-weight: 500;
-      margin: 0;
-    }
-    .radio-group input[type="radio"] {
-      width: auto;
-      height: auto;
-      margin: 0;
-    }
-    .primary-btn, .secondary-btn {
+    button {
       width: 100%;
-      height: 38px;
-      border-radius: 3px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .primary-btn {
+      padding: 10px;
+      background: #3352a3;
+      color: white;
       border: none;
-      background: var(--brand-blue);
-      color: #fff;
-    }
-    .secondary-btn {
-      border: 1px solid #8fa3cf;
-      background: #fff;
-      color: var(--brand-blue);
+      border-radius: 5px;
+      cursor: pointer;
       margin-top: 10px;
     }
-    .helper-text {
-      font-size: 12px;
-      line-height: 1.5;
-      color: #555;
-      margin-top: 6px;
-    }
-    .login-links {
-      text-align: center;
-      margin: 24px 0 18px;
-      line-height: 1.6;
-    }
-    .login-links a {
-      color: #4b4b4b;
-      text-decoration: none;
-      font-size: 15px;
-    }
-    .login-links a:hover { text-decoration: underline; }
-    .mini-divider {
-      margin: 20px 0 14px;
-      border-top: 1px solid #cad2df;
-    }
     #status {
-      min-height: 22px;
-      margin-top: 14px;
-      text-align: center;
+      margin-top: 10px;
       font-size: 14px;
-      color: var(--error);
-      white-space: pre-line;
-    }
-    #status.success { color: var(--success); }
-    .hidden { display: none; }
-    .footer-panel {
-      background: #2f343a;
-      color: #fff;
-      padding: 28px 0 0;
-      margin-top: 40px;
-      position: relative;
-      z-index: 2;
-    }
-    .footer-panel .container { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
-    .footer-panel h5 { margin: 0 0 14px; font-size: 18px; }
-    .footer-panel ul { list-style: none; padding: 0; margin: 0; }
-    .footer-panel li { margin: 8px 0; }
-    .footer-panel a { color: #fff; text-decoration: none; }
-    .footer-panel a:hover { text-decoration: underline; }
-    .footer-logo { max-width: 190px; height: auto; display: block; }
-    .footer-black {
-      border-top: 1px solid rgba(255,255,255,.12);
-      margin-top: 24px;
-      padding: 16px 0 24px;
-      font-size: 14px;
-    }
-    @media (max-width: 1100px) {
-      .content { grid-template-columns: 1fr; gap: 32px; }
-      .auth-panel { max-width: 460px; margin: 0 auto; min-height: auto; }
-      .diag-right { display: none; }
-    }
-    @media (max-width: 768px) {
-      .header { grid-template-columns: 1fr; gap: 14px; padding: 16px 20px 8px; justify-items: center; }
-      .content { padding: 0 20px 40px; }
-      .hero h1 { font-size: 44px; }
-      .hero p { font-size: 20px; }
-      .topbar { font-size: 14px; gap: 8px; }
-      .footer-panel .container { padding: 0 20px; }
     }
   </style>
 </head>
+
 <body>
-  <div class="topbar">
-    <span>Text Sizes</span>
-    <span class="icon-box">-</span>
-    <span class="icon-box">A</span>
-    <span class="icon-box">+</span>
-    <span>English</span>
-  </div>
 
-  <div class="page">
-    <div class="curve-left"></div>
-    <div class="curve-right"></div>
-    <div class="diag-left"></div>
-    <div class="diag-right"></div>
+<div class="box">
+  <h3>Member Login</h3>
 
-    <header class="header">
-      <div class="logo">
-        <img src="./footer-logo.jpg" alt="LIBERTY Dental Plan" />
-      </div>
-      <div>
-        <button class="emergency-btn" type="button">I have a Dental Emergency</button>
-      </div>
-      <div></div>
-    </header>
+  <!-- UI stays same -->
+  <input id="username" type="text" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
 
-    <main class="content">
-      <section>
-        <div class="alerts">
-          <div class="alert info">
-            <div class="alert-left">
-              <img src="./Info.svg" alt="Info" />
-              <div>Para obtener ayuda en español, llame al <strong>888.703.6999</strong>.</div>
-            </div>
-            <div class="alert-close" onclick="this.parentElement.style.display='none'">×</div>
-          </div>
-          <div class="alert warn">
-            <div class="alert-left">
-              <div>Please <strong>re-register</strong> with a new username and password the <strong>first time</strong> you login to the new Portal and App.</div>
-            </div>
-            <div class="alert-close" onclick="this.parentElement.style.display='none'">×</div>
-          </div>
-        </div>
+  <button id="loginBtn">Login</button>
 
-        <div class="hero">
-          <h1>Welcome to<br />My Compass</h1>
-          <p>Liberty wants to get you the information you need, when you need it.</p>
-          <p>Look for a dentist, read about your benefits, download a copy of your Member ID Card, and more!</p>
-          <p>You can log into this portal 24 hours a day, 7 days a week.</p>
-        </div>
-      </section>
+  <div id="status"></div>
+</div>
 
-      <aside class="auth-panel">
-        <h2>Member Access</h2>
-        <p class="auth-note">Prepared for Microsoft Entra External ID native authentication using your tenant and app settings. Replace the simulated handlers below with your application's native authentication SDK or API calls.</p>
+<script>
+  // ✅ YOUR CONFIG (already filled)
+  const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+  const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+  const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+  const REDIRECT_URI = "https://anilkishore1978.github.io/ACPL-test/";
 
-        <div class="config-box">
-          <strong>Configured values</strong><br />
-          Tenant Subdomain: <code>birlasoftdentalentra</code><br />
-          Tenant ID: <code>36090fda-8a83-4040-8c58-7cf784511505</code><br />
-          Client ID: <code>d1141f25-2729-4ea5-9892-f80db4205ebf</code><br />
-          Flow: <code>LDFLOW</code><br />
-          Sign-in Method: <code>Email with password</code>
-        </div>
+  // 🔴 IMPORTANT: UPDATE THIS POLICY NAME
+  const POLICY = "B2C_1_SignInSignUp"; // <-- change if different
 
-        <div class="tabs">
-          <button class="tab-btn active" type="button" data-view="signinView">Sign In</button>
-          <button class="tab-btn" type="button" data-view="registerView">Register</button>
-        </div>
-
-        <section id="signinView" class="auth-view active">
-          <div class="field">
-            <label for="signinEmail">Email Address</label>
-            <input id="signinEmail" type="email" placeholder="Email Address" autocomplete="username" />
-          </div>
-          <div class="field">
-            <label for="signinPassword">Password</label>
-            <input id="signinPassword" type="password" placeholder="Password" autocomplete="current-password" />
-          </div>
-          <button class="primary-btn" id="signInBtn" type="button">Sign In</button>
-          <div class="login-links">
-            <a href="#" onclick="return false;">Forgot Password?</a><br />
-            <a href="#" onclick="return false;">Forgot Username?</a>
-          </div>
-          <div class="mini-divider"></div>
-          <button class="secondary-btn" id="switchToRegister" type="button">Create Account</button>
-        </section>
-
-        <section id="registerView" class="auth-view">
-          <div class="field">
-            <label for="registerEmail">Email Address</label>
-            <input id="registerEmail" type="email" placeholder="Email Address" autocomplete="email" />
-          </div>
-          <div class="field">
-            <label for="countryRegion">Country/Region</label>
-            <select id="countryRegion">
-              <option value="">Select Country/Region</option>
-              <option value="US">United States</option>
-              <option value="IN">India</option>
-              <option value="SA">Saudi Arabia</option>
-              <option value="AE">United Arab Emirates</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="registerPassword">Password</label>
-            <input id="registerPassword" type="password" placeholder="Password" autocomplete="new-password" />
-          </div>
-          <div class="field">
-            <label for="confirmPassword">Confirm Password</label>
-            <input id="confirmPassword" type="password" placeholder="Confirm Password" autocomplete="new-password" />
-          </div>
-          <div class="field">
-            <label>Are you an existing member?</label>
-            <div class="radio-group">
-              <label><input type="radio" name="existingMember" value="yes" /> Yes</label>
-              <label><input type="radio" name="existingMember" value="no" checked /> No</label>
-            </div>
-          </div>
-          <div class="field hidden" id="memberIdField">
-            <label for="memberId">Member ID</label>
-            <input id="memberId" type="text" placeholder="Enter Member ID" />
-            <div class="helper-text">If Existing Member is Yes, validate Member ID against your Liberty member validation API before completing sign-up. Your uploaded Postman collection shows the backend expects a MemberNumber payload for this validation step. [file:191]</div>
-          </div>
-          <button class="primary-btn" id="registerBtn" type="button">Register</button>
-          <button class="secondary-btn" id="switchToSignIn" type="button">Back to Sign In</button>
-        </section>
-
-        <div id="status" aria-live="polite"></div>
-      </aside>
-    </main>
-
-    <footer class="footer-panel">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-md-2 mb-3 d-flex justify-content-center align-items-start">
-            <a href="https://www.libertydentalplan.com" target="_blank" rel="noreferrer noopener">
-              <img src="./footer-logo.jpg" alt="Logo" class="img-fluid footer-logo" />
-            </a>
-          </div>
-          <div class="col-12 col-md-2 mb-3">
-            <h5>Explore</h5>
-            <ul>
-              <li><a href="https://www.libertydentalplan.com/Members/Welcome-to-Member-Services.aspx" target="_blank" rel="noreferrer noopener">Members</a></li>
-              <li><a href="https://www.libertydentalplan.com/Providers/Providers-1.aspx" target="_blank" rel="noreferrer noopener">Providers</a></li>
-              <li><a href="https://www.libertydentalplan.com/Agents-Brokers-1/Welcome-1-1.aspx" target="_blank" rel="noreferrer noopener">Brokers</a></li>
-            </ul>
-          </div>
-          <div class="col-12 col-md-2 mb-3">
-            <h5>Programs</h5>
-            <ul>
-              <li><a href="https://www.libertydentalplan.com/Programs/Medicaid.aspx" target="_blank" rel="noreferrer noopener">Medicaid</a></li>
-              <li><a href="https://www.libertydentalplan.com/Programs/Commercial-1.aspx" target="_blank" rel="noreferrer noopener">Commercial</a></li>
-              <li><a href="https://sales.libertydentalplan.com/dentalplans" target="_blank" rel="noreferrer noopener">Individual &amp; Family plans</a></li>
-            </ul>
-          </div>
-          <div class="col-12 col-md-2 mb-3">
-            <h5>About</h5>
-            <ul>
-              <li><a href="https://www.libertydentalplan.com/About-LIBERTY/Company-Facts.aspx" target="_blank" rel="noreferrer noopener">Overview</a></li>
-              <li><a href="https://www.libertydentalplan.com/About-LIBERTY/Careers-Open-Positions.aspx" target="_blank" rel="noreferrer noopener">Careers</a></li>
-              <li><a href="https://www.libertydentalplan.com/About-LIBERTY/Contact-Us.aspx" target="_blank" rel="noreferrer noopener">Contact Us</a></li>
-            </ul>
-          </div>
-          <div class="col-12 col-md-2 mb-3">
-            <h5>Member Resources</h5>
-            <ul>
-              <li><a href="https://www.libertydentalplan.com/Members/Member---Contact-Us.aspx" target="_blank" rel="noreferrer noopener">Contact Member Services</a></li>
-              <li><a href="https://www.libertydentalplan.com/Find-A-Dentist/Find-A-Dentist.aspx" target="_blank" rel="noreferrer noopener">Find A Dentist</a></li>
-              <li><a href="https://www.libertydentalplan.com/Members/LIBERTY-Mobile.aspx" target="_blank" rel="noreferrer noopener">Download Mobile App</a></li>
-            </ul>
-          </div>
-          <div class="col-12 col-md-2 mb-3">
-            <h5>Follow</h5>
-            <ul class="d-flex" style="gap:16px;">
-              <li><a href="https://www.instagram.com/libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-instagram" style="color:white;"></i></a></li>
-              <li><a href="https://www.facebook.com/libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-facebook-f" style="color:white;"></i></a></li>
-              <li><a href="https://www.youtube.com/@libertydentalplan" rel="noreferrer noopener" target="_blank"><i class="fab fa-youtube" style="color:white;"></i></a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="row footer-black">
-          <div class="col-12 col-md-3 d-flex justify-content-center align-items-center">
-            <span>© <span id="currentYear">2026</span> LIBERTY Dental Plan</span>
-          </div>
-          <div class="col-12 col-md-9">
-            <span class="mx-4"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Legal/Privacy-Statement/Patient-Privacy-1.aspx" target="_blank" rel="noreferrer noopener">Privacy Notice</a></span>
-            <span class="mx-3"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Legal/Sitemap.aspx" target="_blank" rel="noreferrer noopener">Site Map</a></span>
-            <span class="mx-3"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Legal/Grievances.aspx" target="_blank" rel="noreferrer noopener">GRIEVANCE FORMS</a></span>
-            <span class="mx-3"><a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Members/Forms-Literature.aspx" target="_blank" rel="noreferrer noopener"><img alt="Nondiscrimination and Language Assistance" loading="lazy" width="25" height="25" class="inline disc-img" src="./ic_languages_16px.jpg" /> <span class="pl-6">Nondiscrimination and Language Assistance</span></a></span>
-          </div>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <script>
-    const NATIVE_AUTH_CONFIG = {
-      tenantSubdomain: 'birlasoftdentalentra',
-      tenantId: '36090fda-8a83-4040-8c58-7cf784511505',
-      clientId: 'd1141f25-2729-4ea5-9892-f80db4205ebf',
-      userFlow: 'LDFLOW',
-      signInMethod: 'emailWithPassword',
-      memberValidationEndpoint: 'https://dev-api.libertydentalplan.com/memberauthenticationapi/memberauthentication/membernumber'
-    };
-
-    const tabs = document.querySelectorAll('.tab-btn');
-    const views = document.querySelectorAll('.auth-view');
-    const status = document.getElementById('status');
-    const memberRadios = document.querySelectorAll('input[name="existingMember"]');
-    const memberIdField = document.getElementById('memberIdField');
-    const memberIdInput = document.getElementById('memberId');
-
-    function setView(viewId) {
-      tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.view === viewId));
-      views.forEach(view => view.classList.toggle('active', view.id === viewId));
-      status.textContent = '';
-      status.className = '';
+  const msalConfig = {
+    auth: {
+      clientId: CLIENT_ID,
+      authority: `https://${TENANT_HOST}/${TENANT_ID}/${POLICY}`,
+      knownAuthorities: [TENANT_HOST],
+      redirectUri: REDIRECT_URI,
+      navigateToLoginRequestUrl: false
+    },
+    cache: {
+      cacheLocation: "sessionStorage"
     }
+  };
 
-    tabs.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
-    document.getElementById('switchToRegister').addEventListener('click', () => setView('registerView'));
-    document.getElementById('switchToSignIn').addEventListener('click', () => setView('signinView'));
+  const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-    function toggleMemberId() {
-      const selected = document.querySelector('input[name="existingMember"]:checked');
-      const show = selected && selected.value === 'yes';
-      memberIdField.classList.toggle('hidden', !show);
-      if (!show) memberIdInput.value = '';
-    }
-
-    memberRadios.forEach(radio => radio.addEventListener('change', toggleMemberId));
-    toggleMemberId();
-
-    async function validateMemberId(memberId) {
-      return {
-        ok: true,
-        message: 'Member validation placeholder. Replace with your secure server-side call or native app integration.'
-      };
-    }
-
-    document.getElementById('signInBtn').addEventListener('click', async () => {
-      const email = document.getElementById('signinEmail').value.trim();
-      const password = document.getElementById('signinPassword').value;
-
-      if (!email || !password) {
-        status.textContent = 'Please enter both email address and password.';
-        status.className = '';
-        return;
+  // Handle redirect (important)
+  msalInstance.handleRedirectPromise()
+    .then((response) => {
+      if (response && response.account) {
+        msalInstance.setActiveAccount(response.account);
+        document.getElementById("status").style.color = "green";
+        document.getElementById("status").innerText = "Login successful!";
       }
-
-      status.textContent = [
-        'Sign-in payload ready.',
-        'Tenant Subdomain: ' + NATIVE_AUTH_CONFIG.tenantSubdomain,
-        'Client ID: ' + NATIVE_AUTH_CONFIG.clientId,
-        'Next step: call your native authentication sign-in API/SDK with email and password.'
-      ].join('\n');
-      status.className = 'success';
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("status").innerText = err.message;
     });
 
-    document.getElementById('registerBtn').addEventListener('click', async () => {
-      const email = document.getElementById('registerEmail').value.trim();
-      const countryRegion = document.getElementById('countryRegion').value;
-      const password = document.getElementById('registerPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-      const selected = document.querySelector('input[name="existingMember"]:checked');
-      const existingMember = selected ? selected.value : 'no';
-      const memberId = memberIdInput.value.trim();
+  // Login button
+  document.getElementById("loginBtn").addEventListener("click", async (e) => {
+    e.preventDefault();
 
-      if (!email || !countryRegion || !password || !confirmPassword) {
-        status.textContent = 'Please complete email address, country/region, password, and confirm password.';
-        status.className = '';
-        return;
-      }
+    try {
+      const response = await msalInstance.loginPopup({
+        scopes: ["openid", "profile", "email"]
+      });
 
-      if (password !== confirmPassword) {
-        status.textContent = 'Password and confirm password do not match.';
-        status.className = '';
-        return;
-      }
+      msalInstance.setActiveAccount(response.account);
 
-      if (existingMember === 'yes' && !memberId) {
-        status.textContent = 'Member ID is required when Existing Member is Yes.';
-        status.className = '';
-        return;
-      }
+      document.getElementById("status").style.color = "green";
+      document.getElementById("status").innerText = "Login successful!";
 
-      if (existingMember === 'yes') {
-        const validation = await validateMemberId(memberId);
-        if (!validation.ok) {
-          status.textContent = validation.message || 'Member ID validation failed.';
-          status.className = '';
-          return;
-        }
-      }
+      console.log("User:", response.account);
 
-      const signUpPayload = {
-        tenantSubdomain: NATIVE_AUTH_CONFIG.tenantSubdomain,
-        clientId: NATIVE_AUTH_CONFIG.clientId,
-        userFlow: NATIVE_AUTH_CONFIG.userFlow,
-        attributes: {
-          email,
-          countryRegion,
-          existingMember,
-          memberId
-        }
-      };
+    } catch (error) {
+      console.error(error);
+      document.getElementById("status").innerText = error.message;
+    }
+  });
+</script>
 
-      status.textContent = [
-        'Registration payload ready for native authentication.',
-        'Flow: ' + signUpPayload.userFlow,
-        'Email: ' + signUpPayload.attributes.email,
-        'Country/Region: ' + signUpPayload.attributes.countryRegion,
-        'Existing Member: ' + signUpPayload.attributes.existingMember,
-        'Next step: map these fields to the exact Entra native authentication sign-up API attributes in your app code.'
-      ].join('\n');
-      status.className = 'success';
-    });
-  </script>
 </body>
 </html>
