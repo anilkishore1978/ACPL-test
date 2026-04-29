@@ -552,12 +552,10 @@
     }
   };
 
-  // ✅ Initialize first
   const msalInstance = new msal.PublicClientApplication(msalConfig);
 
   async function startApp() {
     try {
-      // ✅ Handle redirect response
       const response = await msalInstance.handleRedirectPromise();
 
       if (response && response.account) {
@@ -566,12 +564,9 @@
         return;
       }
 
-      // ✅ Check existing session
       const accounts = msalInstance.getAllAccounts();
       if (accounts.length > 0) {
         msalInstance.setActiveAccount(accounts[0]);
-        // optional auto redirect to dashboard
-        // window.location.href = "dashboard.html";
       }
 
     } catch (e) {
@@ -581,19 +576,21 @@
     }
   }
 
-  startApp();
+  // ✅ FIX: Wait for DOM
+  document.addEventListener("DOMContentLoaded", () => {
+    startApp();
 
-  // ✅ Login button click
-  document.getElementById("loginBtn").addEventListener("click", async () => {
-    try {
-      await msalInstance.loginRedirect({
-        scopes: ["openid", "profile", "email"]
-      });
-    } catch (e) {
-      console.error("MSAL login error:", e);
-      document.getElementById("status").innerText =
-        e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
-    }
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      try {
+        await msalInstance.loginRedirect({
+          scopes: ["openid", "profile", "email"]
+        });
+      } catch (e) {
+        console.error("MSAL login error:", e);
+        document.getElementById("status").innerText =
+          e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
+      }
+    });
   });
 </script>
 </body>
