@@ -670,7 +670,7 @@
       navigateToLoginRequestUrl: false
     },
     cache: {
-      cacheLocation: "sessionStorage"
+      cacheLocation: "localStorage"   // 🔥 important for session stability
     }
   };
 
@@ -696,16 +696,17 @@
 
   async function startDashboard() {
     try {
-      // ✅ Handle redirect response
+      // 1️⃣ Handle redirect response (if any)
       const response = await msalInstance.handleRedirectPromise();
 
       if (response && response.account) {
         msalInstance.setActiveAccount(response.account);
       }
 
+      // 2️⃣ Check active account
       let account = msalInstance.getActiveAccount();
 
-      // ✅ Check existing session
+      // 3️⃣ Check cache accounts
       if (!account) {
         const accounts = msalInstance.getAllAccounts();
         if (accounts.length > 0) {
@@ -714,8 +715,7 @@
         }
       }
 
-      // 🔥 FIX: DO NOT redirect immediately
-      // Try silent SSO first
+      // 4️⃣ Silent SSO (App Launcher scenario)
       if (!account) {
         try {
           const silent = await msalInstance.ssoSilent({
@@ -729,22 +729,22 @@
         } catch (e) {
           console.warn("Silent SSO failed:", e);
 
-          // 🔥 fallback: trigger login instead of redirect to home
-          await msalInstance.loginRedirect({
-            scopes: ["openid", "profile", "email"]
-          });
+          // ✅ DO NOT trigger loginRedirect
+          document.getElementById("status").textContent =
+            "Session not available. Please access app from Entra portal.";
+
           return;
         }
       }
 
-      // ✅ Final check
+      // 5️⃣ Final check
       if (!account) {
         document.getElementById("status").textContent =
-          "User session not found.";
+          "User not authenticated.";
         return;
       }
 
-      // ✅ Update UI
+      // 6️⃣ Update UI
       setUserUI(account);
 
     } catch (e) {
