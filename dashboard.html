@@ -650,7 +650,7 @@
     </footer>
   </div>
 
-  <script>
+ <script>
   const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
   const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
   const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
@@ -665,7 +665,7 @@
       clientId: CLIENT_ID,
       authority: `https://${TENANT_HOST}/${TENANT_ID}`,
       knownAuthorities: [TENANT_HOST],
-      redirectUri: DASHBOARD_PAGE,   // ✅ IMPORTANT FIX
+      redirectUri: DASHBOARD_PAGE,
       postLogoutRedirectUri: HOME_PAGE,
       navigateToLoginRequestUrl: false
     },
@@ -696,7 +696,7 @@
 
   async function startDashboard() {
     try {
-      // ✅ Handle redirect (if login happened)
+      // ✅ Handle redirect response
       const response = await msalInstance.handleRedirectPromise();
 
       if (response && response.account) {
@@ -705,11 +705,42 @@
 
       let account = msalInstance.getActiveAccount();
 
-    
-
-      // ❌ If still no user → redirect
+      // ✅ Check existing session
       if (!account) {
-        window.location.href = HOME_PAGE;
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+          account = accounts[0];
+          msalInstance.setActiveAccount(account);
+        }
+      }
+
+      // 🔥 FIX: DO NOT redirect immediately
+      // Try silent SSO first
+      if (!account) {
+        try {
+          const silent = await msalInstance.ssoSilent({
+            scopes: ["openid", "profile", "email"]
+          });
+
+          if (silent && silent.account) {
+            msalInstance.setActiveAccount(silent.account);
+            account = silent.account;
+          }
+        } catch (e) {
+          console.warn("Silent SSO failed:", e);
+
+          // 🔥 fallback: trigger login instead of redirect to home
+          await msalInstance.loginRedirect({
+            scopes: ["openid", "profile", "email"]
+          });
+          return;
+        }
+      }
+
+      // ✅ Final check
+      if (!account) {
+        document.getElementById("status").textContent =
+          "User session not found.";
         return;
       }
 
