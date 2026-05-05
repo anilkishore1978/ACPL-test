@@ -670,15 +670,28 @@
       navigateToLoginRequestUrl: false
     },
     cache: {
-      cacheLocation: "localStorage"   // 🔥 important for session stability
+      cacheLocation: "localStorage"
     }
   };
 
   const msalInstance = new msal.PublicClientApplication(msalConfig);
 
+  // ✅ FIXED: Proper claim mapping
   function setUserUI(account) {
-    const name = account?.name || account?.username || "Member";
-    const username = account?.username || "Not available";
+    const claims = account.idTokenClaims || {};
+
+    const name =
+      claims.name ||
+      claims.given_name ||
+      claims.preferred_username ||
+      "Member";
+
+    const email =
+      claims.email ||
+      claims.preferred_username ||
+      claims.upn ||
+      (claims.emails && claims.emails[0]) ||
+      "Not available";
 
     const initials = name
       .split(" ")
@@ -689,14 +702,14 @@
 
     document.getElementById("welcomeUser").textContent = `Signed in as ${name}`;
     document.getElementById("memberName").textContent = name;
-    document.getElementById("memberEmail").textContent = username;
-    document.getElementById("accountUsername").textContent = username;
+    document.getElementById("memberEmail").textContent = email;
+    document.getElementById("accountUsername").textContent = email;
     document.getElementById("avatarInitials").textContent = initials || "M";
   }
 
   async function startDashboard() {
     try {
-      // 1️⃣ Handle redirect response (if any)
+      // 1️⃣ Handle redirect response
       const response = await msalInstance.handleRedirectPromise();
 
       if (response && response.account) {
@@ -706,7 +719,7 @@
       // 2️⃣ Check active account
       let account = msalInstance.getActiveAccount();
 
-      // 3️⃣ Check cache accounts
+      // 3️⃣ Check cache
       if (!account) {
         const accounts = msalInstance.getAllAccounts();
         if (accounts.length > 0) {
@@ -715,7 +728,7 @@
         }
       }
 
-      // 4️⃣ Silent SSO (App Launcher scenario)
+      // 4️⃣ Silent SSO (App Launcher)
       if (!account) {
         try {
           const silent = await msalInstance.ssoSilent({
@@ -729,7 +742,6 @@
         } catch (e) {
           console.warn("Silent SSO failed:", e);
 
-          // ✅ DO NOT trigger loginRedirect
           document.getElementById("status").textContent =
             "Session not available. Please access app from Entra portal.";
 
@@ -737,12 +749,16 @@
         }
       }
 
-      // 5️⃣ Final check
+      // 5️⃣ Final validation
       if (!account) {
         document.getElementById("status").textContent =
           "User not authenticated.";
         return;
       }
+
+      // 🔍 DEBUG (optional - remove later)
+      console.log("ACCOUNT:", account);
+      console.log("CLAIMS:", account.idTokenClaims);
 
       // 6️⃣ Update UI
       setUserUI(account);
