@@ -705,30 +705,7 @@
 
       let account = msalInstance.getActiveAccount();
 
-      // ✅ Check cache
-      if (!account) {
-        const accounts = msalInstance.getAllAccounts();
-        if (accounts.length > 0) {
-          account = accounts[0];
-          msalInstance.setActiveAccount(account);
-        }
-      }
-
-      // 🔥 CRITICAL FIX FOR ENTRA APP LAUNCHER
-      if (!account) {
-        try {
-          const silent = await msalInstance.ssoSilent({
-            scopes: ["openid", "profile", "email"]
-          });
-
-          if (silent && silent.account) {
-            msalInstance.setActiveAccount(silent.account);
-            account = silent.account;
-          }
-        } catch (e) {
-          console.warn("Silent SSO failed:", e);
-        }
-      }
+    
 
       // ❌ If still no user → redirect
       if (!account) {
