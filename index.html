@@ -17,13 +17,6 @@
     <script src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/jquery-3.6.0.min.js.download"></script>
     <script src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/bootstrap.bundle.min.js.download" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/commonContentLoader.js.download"></script>
-
-<style>
-.login-panel-wrap{display:flex;justify-content:flex-end;align-items:flex-start;width:100%}
-.login-panel{width:100%;max-width:360px;background:#e9e9ee;border-radius:4px;min-height:520px}
-.login-panel .btn{border-radius:6px}
-</style>
-
 </head>
 <body>
     <div id="__next">
@@ -166,31 +159,21 @@
                        </div>
                     </div>
                  </div>
-                       <div class="col-lg-5 col-xl-4 ms-auto text-dark login-panel-wrap"><div class="login-panel card shadow-sm border-0">
-<div class="card-body p-4 p-md-5 text-center">
-<h4 class="mb-4 fw-bold">Account Access</h4>
-<a id="loginBtn" class="btn btn-primary w-100 mb-3" href="#">Login</a>
-<a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="#">Forgot Password</a>
-<a id="registerNowBtn" class="btn btn-link w-100 fw-semibold" href="#">Register Now</a>
-<div class="mt-4"><a id="forgotUsernameLink" href="#forgotUsername" class="text-decoration-none">Forgot Username?</a></div>
+                       <div class="col-lg-5 col-xl-4 ms-auto">
+  <div class="card shadow-sm border-0 bg-light">
+    <div class="card-body p-4 p-md-5 text-center">
+      <h4 class="fw-bold mb-4">Member Portal</h4>
+
+      <a id="loginBtn" class="btn btn-primary w-100 mb-3" href="#">Login</a>
+      <a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="#">Forgot Password</a>
+      <a id="registerNowBtn" class="btn btn-link fw-semibold w-100 p-0 mb-3" href="https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505/oauth2/v2.0/authorize?client_id=d1141f25-2729-4ea5-9892-f80db4205ebf&response_type=code&redirect_uri=file%3A%2F%2F%2Fauth%2Fcallback&scope=openid+profile+email+offline_access&prompt=login">Register Now</a>
+
+      <div class="mt-4" id="forgotUsername">
+        <a href="#" class="text-decoration-none">Forgot Username?</a>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-                           <div class="container unified_container" role="presentation">
-                               <div class="row">
-                                   <div class="panel panel-default">
-                                       <div class="panel-body position-relative">
-                                           <div id="forgotUsername" class="position-absolute w-100 text-center">
-                                               <a href="https://ldpportalb2cdev.b2clogin.com/ldpportalB2CDev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_FORGOTUSERNAME_MEMBERPORTAL&amp;client_id=187473b9-a6d2-4a5f-a851-4f073fbd3b49&amp;nonce=defaultNonce&amp;redirect_uri=https%3A%2F%2Fmemberportal-dev.libertydentalplan.com%2Fapi%2Fauth%2Fcallback%2Fazure-ad-b2c&amp;scope=openid&amp;response_type=id_token&amp;prompt=login">
-                                                   <span class="imprint-en">Forgot Username?</span>
-                                                   <span class="imprint-es">Forgot Username?</span>
-                                               </a>
-                                           </div>
-                                           <div id="api" role="main"></div>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                       </div>
                    </div>
                </div>
            </div>
@@ -292,29 +275,26 @@
             </div>
         </div>
     </div> 
- 
+ <script>
+  const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+  const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+  const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
 
-<script>
-const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
-const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-const POLICY = "B2C_1_signup_signin";
-const REDIRECT_URI = window.location.origin + "/auth/callback";
-const SCOPES = "openid profile email offline_access";
-function authUrl(extraParams = {}) {
-  const u = new URL(`https://${TENANT_HOST}/${TENANT_ID}/oauth2/v2.0/authorize`);
-  u.searchParams.set('client_id', CLIENT_ID);
-  u.searchParams.set('response_type', 'code');
-  u.searchParams.set('redirect_uri', REDIRECT_URI);
-  u.searchParams.set('scope', SCOPES);
-  u.searchParams.set('p', POLICY);
-  u.searchParams.set('prompt', 'login');
-  Object.entries(extraParams).forEach(([k,v]) => u.searchParams.set(k,v));
-  return u.toString();
-}
-document.getElementById('loginBtn').href = authUrl();
-document.getElementById('registerNowBtn').href = authUrl({screen_hint:'signup'});
-document.getElementById('forgotPasswordBtn').href = authUrl({forgot:'1'});
+  const REDIRECT_URI = window.location.origin + "/auth/callback";
+  const SCOPES = "openid profile email offline_access";
+
+  function buildAuthUrl() {
+    const url = new URL(`https://${TENANT_HOST}/${TENANT_ID}/oauth2/v2.0/authorize`);
+    url.searchParams.set("client_id", CLIENT_ID);
+    url.searchParams.set("response_type", "code");
+    url.searchParams.set("redirect_uri", REDIRECT_URI);
+    url.searchParams.set("scope", SCOPES);
+    url.searchParams.set("prompt", "login");
+    return url.toString();
+  }
+
+  document.getElementById("loginBtn").href = buildAuthUrl();
+  document.getElementById("forgotPasswordBtn").href = buildAuthUrl();
+  document.getElementById("registerNowBtn").href = buildAuthUrl();
 </script>
-
 </body></html>
