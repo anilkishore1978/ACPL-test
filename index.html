@@ -165,8 +165,8 @@
       <h4 class="fw-bold mb-4">Member Portal</h4>
 
       <a id="loginBtn" class="btn btn-primary w-100 mb-3" href="javascript:void(0)">Login</a>
-      <a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="javascript:void(0)">Forgot Password</a>
-      <a id="registerNowBtn" class="btn btn-link fw-semibold w-100 p-0 mb-3" href="javascript:void(0)">Register Now</a>
+<a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="javascript:void(0)">Forgot Password</a>
+<a id="registerNowBtn" class="btn btn-link fw-semibold w-100 p-0 mb-3" href="javascript:void(0)">Register Now</a>
 
      
     </div>
@@ -287,71 +287,29 @@
     }
   };
 
-  document.getElementById("loginBtn").addEventListener("click", () => {
-    msalInstance.loginRedirect(loginRequest);
-  });
-
-  document.getElementById("registerNowBtn").addEventListener("click", () => {
-    msalInstance.loginRedirect(loginRequest);
-  });
-
-  document.getElementById("forgotPasswordBtn").addEventListener("click", () => {
-    msalInstance.loginRedirect({
-      scopes: ["openid", "profile", "email"],
-      extraQueryParameters: { prompt: "login" }
-    });
-  });
-
+  const loginRequest = { scopes: ["openid", "profile", "email"] };
   const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-  function renderUser(account) {
-    const target = document.getElementById("memberInfo") || document.getElementById("accountInfo");
-    if (!target) return;
-
-    if (account) {
-      target.innerHTML = `
-        <div class="fw-semibold">${account.name || "Signed in user"}</div>
-        <div>${account.username || ""}</div>
-      `;
-    } else {
-      target.innerHTML = `<div>No user information available.</div>`;
-    }
-  }
-
-  function handleResponse(response) {
-    if (response && response.account) {
-      msalInstance.setActiveAccount(response.account);
-      renderUser(response.account);
-      return;
-    }
-
+  async function initAuth() {
+    await msalInstance.handleRedirectPromise().catch(console.error);
     const accounts = msalInstance.getAllAccounts();
     if (accounts.length > 0) {
       msalInstance.setActiveAccount(accounts[0]);
-      renderUser(accounts[0]);
-    } else {
-      renderUser(null);
     }
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      msalInstance.loginRedirect(loginRequest);
+    });
+
+    document.getElementById("registerNowBtn").addEventListener("click", () => {
+      msalInstance.loginRedirect(loginRequest);
+    });
+
+    document.getElementById("forgotPasswordBtn").addEventListener("click", () => {
+      msalInstance.loginRedirect(loginRequest);
+    });
   }
 
-  msalInstance.handleRedirectPromise()
-    .then(handleResponse)
-    .catch(err => {
-      console.error(err);
-      const target = document.getElementById("memberInfo") || document.getElementById("accountInfo");
-      if (target) target.innerHTML = `<div class="text-danger">Sign-in error.</div>`;
-    });
-
-  window.signIn = function () {
-    msalInstance.loginRedirect(loginRequest);
-  };
-
-  window.signOut = function () {
-    const account = msalInstance.getActiveAccount();
-    msalInstance.logoutRedirect({
-      account: account || undefined,
-      postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/"
-    });
-  };
+  initAuth();
 </script>
 </body></html>
