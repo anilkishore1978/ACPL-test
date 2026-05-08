@@ -582,7 +582,7 @@
 
             <div class="btn-row">
               <button class="btn-primary-custom" type="button" onclick="window.location.href='./'">Back to Home</button>
-              <button class="btn-outline-custom" type="button" id="logoutBtn">Logout</button>
+              <button id="signOutBtn" class="btn btn-outline-light btn-sm">Sign out</button>
             </div>
 
             <div id="status"></div>
@@ -696,7 +696,14 @@
       renderUser(null);
     }
   }
+ document.getElementById("signOutBtn").addEventListener("click", async () => {
+    const account = msalInstance.getActiveAccount() || msalInstance.getAllAccounts()[0] || undefined;
 
+    await msalInstance.logoutRedirect({
+      account,
+      postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/"
+    });
+  });
   initDashboard();
 </script>
 
