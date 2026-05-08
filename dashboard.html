@@ -649,142 +649,59 @@
       </div>
     </footer>
   </div>
-
- <script>
-  const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-  const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
-  const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
-
-  const DASHBOARD_PAGE = "https://anilkishore1978.github.io/ACPL-test/dashboard.html";
-  const HOME_PAGE = "https://anilkishore1978.github.io/ACPL-test/";
-
-  document.getElementById("currentYear").textContent = new Date().getFullYear();
-
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+<script>
   const msalConfig = {
     auth: {
-      clientId: CLIENT_ID,
-      authority: `https://${TENANT_HOST}/${TENANT_ID}`,
-      knownAuthorities: [TENANT_HOST],
-      redirectUri: DASHBOARD_PAGE,
-      postLogoutRedirectUri: HOME_PAGE,
-      navigateToLoginRequestUrl: false
+      clientId: "d1141f25-2729-4ea5-9892-f80db4205ebf",
+      authority: "https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505",
+      redirectUri: "https://anilkishore1978.github.io/ACPL-test/"
     },
     cache: {
-      cacheLocation: "localStorage"
+      cacheLocation: "sessionStorage",
+      storeAuthStateInCookie: false
     }
   };
 
   const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-  // ✅ FIXED: Proper claim mapping
-  function setUserUI(account) {
-    const claims = account.idTokenClaims || {};
-
-    const name =
-      claims.name ||
-      claims.given_name ||
-      claims.preferred_username ||
-      "Member";
-
-    const email =
-      claims.email ||
-      claims.preferred_username ||
-      claims.upn ||
-      (claims.emails && claims.emails[0]) ||
-      "Not available";
-
-    const initials = name
-      .split(" ")
-      .map(x => x[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
-
-    document.getElementById("welcomeUser").textContent = `Signed in as ${name}`;
-    document.getElementById("memberName").textContent = name;
-    document.getElementById("memberEmail").textContent = email;
-    document.getElementById("accountUsername").textContent = email;
-    document.getElementById("avatarInitials").textContent = initials || "M";
+  function renderUser(account) {
+    const el = document.getElementById("memberInfo");
+    if (!el) return;
+    if (!account) {
+      el.innerHTML = "<div class='text-warning'>Session not available. Please access app from Entra portal.</div>";
+      return;
+    }
+    el.innerHTML = `
+      <div class="fw-semibold">${account.name || "Signed in user"}</div>
+      <div class="text-muted">${account.username || ""}</div>
+    `;
   }
 
-  async function startDashboard() {
+  async function initDashboard() {
     try {
-      // 1️⃣ Handle redirect response
       const response = await msalInstance.handleRedirectPromise();
-
       if (response && response.account) {
         msalInstance.setActiveAccount(response.account);
-      }
-
-      // 2️⃣ Check active account
-      let account = msalInstance.getActiveAccount();
-
-      // 3️⃣ Check cache
-      if (!account) {
-        const accounts = msalInstance.getAllAccounts();
-        if (accounts.length > 0) {
-          account = accounts[0];
-          msalInstance.setActiveAccount(account);
-        }
-      }
-
-      // 4️⃣ Silent SSO (App Launcher)
-      if (!account) {
-        try {
-          const silent = await msalInstance.ssoSilent({
-            scopes: ["openid", "profile", "email"]
-          });
-
-          if (silent && silent.account) {
-            msalInstance.setActiveAccount(silent.account);
-            account = silent.account;
-          }
-        } catch (e) {
-          console.warn("Silent SSO failed:", e);
-
-          document.getElementById("status").textContent =
-            "Session not available. Please access app from Entra portal.";
-
-          return;
-        }
-      }
-
-      // 5️⃣ Final validation
-      if (!account) {
-        document.getElementById("status").textContent =
-          "User not authenticated.";
+        renderUser(response.account);
         return;
       }
 
-      // 🔍 DEBUG (optional - remove later)
-      console.log("ACCOUNT:", account);
-      console.log("CLAIMS:", account.idTokenClaims);
-
-      // 6️⃣ Update UI
-      setUserUI(account);
-
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        msalInstance.setActiveAccount(accounts[0]);
+        renderUser(accounts[0]);
+      } else {
+        renderUser(null);
+      }
     } catch (e) {
-      console.error("Auth error:", e);
-      document.getElementById("status").textContent =
-        e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error";
+      console.error(e);
+      renderUser(null);
     }
   }
 
-  document.getElementById("logoutBtn").addEventListener("click", async () => {
-    try {
-      const account = msalInstance.getActiveAccount();
-
-      await msalInstance.logoutRedirect({
-        account: account,
-        postLogoutRedirectUri: HOME_PAGE
-      });
-
-    } catch (e) {
-      console.error("Logout error:", e);
-    }
-  });
-
-  startDashboard();
+  initDashboard();
 </script>
+
 </body>
 </html>
