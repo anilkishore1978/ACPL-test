@@ -164,9 +164,9 @@
     <div class="card-body p-4 p-md-5 text-center">
       <h4 class="fw-bold mb-4">Member Portal</h4>
 
-      <a id="loginBtn" class="btn btn-primary w-100 mb-3" href="#">Login</a>
-      <a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="#">Forgot Password</a>
-      <a id="registerNowBtn" class="btn btn-link fw-semibold w-100 p-0 mb-3" href="#">Register Now</a>
+      <a id="loginBtn" class="btn btn-primary w-100 mb-3" href="javascript:void(0)">Login</a>
+      <a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="javascript:void(0)">Forgot Password</a>
+      <a id="registerNowBtn" class="btn btn-link fw-semibold w-100 p-0 mb-3" href="javascript:void(0)">Register Now</a>
 
      
     </div>
@@ -273,26 +273,85 @@
             </div>
         </div>
     </div> 
- <script>
-  const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
-  const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
-  const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+<script>
+  const msalConfig = {
+    auth: {
+      clientId: "d1141f25-2729-4ea5-9892-f80db4205ebf",
+      authority: "https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505",
+      redirectUri: "https://anilkishore1978.github.io/ACPL-test/"
+    },
+    cache: {
+      cacheLocation: "sessionStorage",
+      storeAuthStateInCookie: false
+    }
+  };
 
-  const REDIRECT_URI = window.location.origin + "/ACPL-test/";
-  const SCOPES = "openid profile email offline_access";
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    msalInstance.loginRedirect(loginRequest);
+  });
 
-  function buildAuthUrl() {
-    const url = new URL(`https://${TENANT_HOST}/${TENANT_ID}/oauth2/v2.0/authorize`);
-    url.searchParams.set("client_id", CLIENT_ID);
-    url.searchParams.set("response_type", "code");
-    url.searchParams.set("redirect_uri", REDIRECT_URI);
-    url.searchParams.set("scope", SCOPES);
-    url.searchParams.set("prompt", "login");
-    return url.toString();
+  document.getElementById("registerNowBtn").addEventListener("click", () => {
+    msalInstance.loginRedirect(loginRequest);
+  });
+
+  document.getElementById("forgotPasswordBtn").addEventListener("click", () => {
+    msalInstance.loginRedirect({
+      scopes: ["openid", "profile", "email"],
+      extraQueryParameters: { prompt: "login" }
+    });
+  });
+
+  const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+  function renderUser(account) {
+    const target = document.getElementById("memberInfo") || document.getElementById("accountInfo");
+    if (!target) return;
+
+    if (account) {
+      target.innerHTML = `
+        <div class="fw-semibold">${account.name || "Signed in user"}</div>
+        <div>${account.username || ""}</div>
+      `;
+    } else {
+      target.innerHTML = `<div>No user information available.</div>`;
+    }
   }
 
-  document.getElementById("loginBtn").href = buildAuthUrl();
-  document.getElementById("forgotPasswordBtn").href = buildAuthUrl();
-  document.getElementById("registerNowBtn").href = buildAuthUrl();
+  function handleResponse(response) {
+    if (response && response.account) {
+      msalInstance.setActiveAccount(response.account);
+      renderUser(response.account);
+      return;
+    }
+
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length > 0) {
+      msalInstance.setActiveAccount(accounts[0]);
+      renderUser(accounts[0]);
+    } else {
+      renderUser(null);
+    }
+  }
+
+  msalInstance.handleRedirectPromise()
+    .then(handleResponse)
+    .catch(err => {
+      console.error(err);
+      const target = document.getElementById("memberInfo") || document.getElementById("accountInfo");
+      if (target) target.innerHTML = `<div class="text-danger">Sign-in error.</div>`;
+    });
+
+  window.signIn = function () {
+    msalInstance.loginRedirect(loginRequest);
+  };
+
+  window.signOut = function () {
+    const account = msalInstance.getActiveAccount();
+    msalInstance.logoutRedirect({
+      account: account || undefined,
+      postLogoutRedirectUri: "https://anilkishore1978.github.io/ACPL-test/"
+    });
+  };
 </script>
 </body></html>
