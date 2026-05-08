@@ -1,465 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LIBERTY Dental Plan - Member Portal</title>
+<!-- saved from url=(0069)https://memberportal-blob-dev.libertydentalplan.com/signupsignin.html -->
+<html id="html" lang="en" style="font-size: 1rem;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width">
+    <meta name="og:title" content="Member Portal">
+    <meta name="next-head-count" content="3">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LIBERTY Dental Plan&#39;s Member Self Service Portal">
+    <meta property="og:image" content="/favicon.ico">
+    <title>LIBERTY Dental Plan's Member Portal - Signin</title>
+    <link href="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/css2" rel="stylesheet">
+    <link rel="stylesheet" href="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="icon" href="https://memberportal-blob-dev.libertydentalplan.com/favicon.ico">
+    <link href="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/bootstrap-overrides.css" type="text/css" rel="stylesheet" data-preload="true">
+    <link href="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/styles.css" type="text/css" rel="stylesheet" data-preload="true">
+    <script src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/jquery-3.6.0.min.js.download"></script>
+    <script src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/bootstrap.bundle.min.js.download" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <script src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/commonContentLoader.js.download"></script>
 
-  <link rel="stylesheet" href="./bootstrap-overrides.css">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./all.min.css">
+<style>
+.login-panel-wrap{display:flex;justify-content:flex-end;align-items:flex-start;width:100%}
+.login-panel{width:100%;max-width:360px;background:#e9e9ee;border-radius:4px;min-height:520px}
+.login-panel .btn{border-radius:6px}
+</style>
 
-  <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
-
-  <style>
-    :root{
-      --brand-blue:#3352a3;
-      --brand-dark:#111b36;
-      --panel:#e9e9ee;
-      --info-bg:#dfe5f8;
-      --warn-bg:#f2e7e7;
-      --curve:#dcecf7;
-    }
-
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Roboto, Arial, sans-serif;
-      background:#f7f7f7;
-      color:#222;
-      overflow-x:hidden;
-    }
-
-    .topbar{
-      height:45px;
-      background:var(--brand-blue);
-      color:#fff;
-      display:flex;
-      justify-content:flex-end;
-      align-items:center;
-      padding:0 18px;
-      gap:12px;
-      font-size:16px;
-    }
-
-    .topbar .icon-box{
-      width:22px;
-      height:22px;
-      border:1px solid rgba(255,255,255,.6);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:bold;
-      line-height:1;
-      border-radius:2px;
-    }
-
-    .page{
-      position:relative;
-      min-height:calc(100vh - 45px);
-      overflow:hidden;
-      background:#f7f7f7;
-    }
-
-    .curve-left,
-    .curve-right{
-      position:absolute;
-      border:22px solid var(--curve);
-      border-radius:50%;
-      pointer-events:none;
-      opacity:.95;
-    }
-
-    .curve-left{
-      width:760px;
-      height:760px;
-      left:-470px;
-      bottom:-250px;
-    }
-
-    .curve-right{
-      width:980px;
-      height:980px;
-      right:-430px;
-      bottom:-420px;
-    }
-
-    .diag-left,
-    .diag-right{
-      position:absolute;
-      width:20px;
-      height:92px;
-      background:var(--curve);
-      transform:skew(-25deg);
-      top:62px;
-      pointer-events:none;
-    }
-
-    .diag-left{left:6px}
-    .diag-right{right:398px}
-
-    .header{
-      display:grid;
-      grid-template-columns:1fr auto 1fr;
-      align-items:center;
-      padding:12px 95px 8px;
-      position:relative;
-      z-index:2;
-    }
-
-    .logo img{
-      height:42px;
-      width:auto;
-      display:block;
-    }
-
-    .emergency-btn{
-      background:#fff;
-      border:1px solid #9fb3d6;
-      color:#4f4a3f;
-      border-radius:8px;
-      padding:16px 28px;
-      font-weight:700;
-      font-size:16px;
-      box-shadow:0 1px 2px rgba(0,0,0,.06);
-      cursor:pointer;
-      white-space:nowrap;
-    }
-
-    .content{
-      max-width:1180px;
-      margin:40px auto 0;
-      display:grid;
-      grid-template-columns:minmax(580px, 1fr) 290px;
-      gap:70px;
-      align-items:start;
-      position:relative;
-      z-index:2;
-      padding:0 40px 40px;
-    }
-
-    .alerts{
-      max-width:650px;
-      margin-bottom:28px;
-    }
-
-    .alert{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-radius:6px;
-      padding:14px 16px;
-      margin-bottom:30px;
-      color:#31487d;
-      font-size:18px;
-      line-height:1.45;
-    }
-
-    .alert.info{background:var(--info-bg)}
-    .alert.warn{
-      background:var(--warn-bg);
-      color:#334a80;
-    }
-
-    .alert-left{
-      display:flex;
-      align-items:flex-start;
-      gap:12px;
-      padding-right:10px;
-    }
-
-    .alert-left img{
-      width:22px;
-      height:22px;
-      margin-top:2px;
-    }
-
-    .alert-close{
-      font-size:22px;
-      color:#8d8d8d;
-      cursor:pointer;
-      line-height:1;
-      user-select:none;
-    }
-
-    .hero{
-      max-width:650px;
-      text-align:center;
-      padding-top:28px;
-    }
-
-    .hero h1{
-      font-size:62px;
-      line-height:1.02;
-      margin:0 0 24px;
-      color:var(--brand-dark);
-      font-weight:800;
-    }
-
-    .hero p{
-      font-size:24px;
-      line-height:1.45;
-      margin:0 auto 26px;
-      color:#1f2433;
-      max-width:610px;
-    }
-
-    .login-panel{
-      background:var(--panel);
-      padding:28px 34px 36px;
-      min-height:518px;
-      box-shadow:none;
-    }
-
-    .login-panel h2{
-      margin:0 0 28px;
-      text-align:center;
-      font-size:25px;
-      font-weight:700;
-      color:#333;
-    }
-
-    .field{
-      margin-bottom:18px;
-      text-align:left;
-    }
-
-    .field label{
-      display:block;
-      margin-bottom:10px;
-      font-size:17px;
-      font-weight:700;
-      color:#333;
-    }
-
-    .field input{
-      width:100%;
-      height:38px;
-      border:1px solid #909090;
-      border-radius:3px;
-      padding:8px 12px;
-      font-size:16px;
-      background:#fff;
-    }
-
-    .login-btn,
-    .register-btn{
-      width:100%;
-      height:36px;
-      border:none;
-      border-radius:3px;
-      background:var(--brand-blue);
-      color:#fff;
-      font-size:16px;
-      font-weight:700;
-      cursor:pointer;
-    }
-
-    .login-btn{margin-top:10px}
-
-    .login-links{
-      text-align:center;
-      margin:38px 0 36px;
-      line-height:1.4;
-    }
-
-    .login-links a{
-      color:#4b4b4b;
-      text-decoration:none;
-      font-size:17px;
-    }
-
-    .login-links a:hover{text-decoration:underline}
-
-    .new-member{
-      text-align:center;
-      margin-top:18px;
-    }
-
-    .new-member h3{
-      margin:0 0 18px;
-      font-size:22px;
-      color:#333;
-      font-weight:700;
-    }
-
-    #status{
-      min-height:22px;
-      margin-top:14px;
-      text-align:center;
-      font-size:14px;
-      color:#b42318;
-    }
-
-    .footer-panel{
-      background:#2f343a;
-      color:#fff;
-      padding:28px 0;
-      margin-top:40px;
-      position:relative;
-      z-index:2;
-    }
-
-    .footer-panel .container{
-      max-width:1180px;
-      margin:0 auto;
-      padding:0 40px;
-    }
-
-    .footer-panel h5{
-      margin:0 0 14px;
-      font-size:18px;
-    }
-
-    .footer-panel ul{
-      list-style:none;
-      padding:0;
-      margin:0;
-    }
-
-    .footer-panel li{
-      margin:8px 0;
-    }
-
-    .footer-panel a{
-      color:#fff;
-      text-decoration:none;
-    }
-
-    .footer-panel a:hover{
-      text-decoration:underline;
-    }
-
-    .footer-logo{
-      max-width:190px;
-      height:auto;
-      display:block;
-    }
-
-    @media (max-width: 1100px){
-      .content{
-        grid-template-columns:1fr;
-        gap:32px;
-      }
-      .login-panel{
-        max-width:360px;
-        margin:0 auto;
-        min-height:auto;
-      }
-      .diag-right{display:none}
-    }
-
-    @media (max-width: 768px){
-      .header{
-        grid-template-columns:1fr;
-        gap:14px;
-        padding:16px 20px 8px;
-        justify-items:center;
-      }
-      .content{
-        padding:0 20px 40px;
-      }
-      .hero h1{
-        font-size:44px;
-      }
-      .hero p{
-        font-size:20px;
-      }
-      .topbar{
-        font-size:14px;
-        gap:8px;
-      }
-      .footer-panel .container{
-        padding:0 20px;
-      }
-    }
-  </style>
 </head>
 <body>
-  <div class="topbar">
-    <span>Text Size</span>
-    <span class="icon-box">−</span>
-    <span class="icon-box">↻</span>
-    <span class="icon-box">+</span>
-    <span>🌐 English</span>
-  </div>
-
-  <div class="page">
-    <div class="curve-left"></div>
-    <div class="curve-right"></div>
-    <div class="diag-left"></div>
-    <div class="diag-right"></div>
-
-    <header class="header">
-      <div class="logo">
-        <img src="./C-Stacked-Horizontal.svg" alt="Company Logo" class="portal-logo">
-      </div>
-      <button class="emergency-btn" type="button">I have a Dental Emergency</button>
-      <div></div>
-    </header>
-
-    <main class="content">
-      <section>
-        <div class="alerts">
-          <div class="alert info">
-            <div class="alert-left">
-              <img src="./Info.svg" alt="">
-              <div>Para obtener ayuda en español, llame al <strong>888.703.6999</strong></div>
+    <div id="__next">
+        <header>
+            <div class="navbar navbar-expand bg-primary py-0">
+                <div class="container-xl">
+                    <div class="row mx-0 gx-4 w-100 justify-content-end">
+                        <div class="col-auto py-1">
+                            <div class="row mx-0 py-1 text-white gy-0 gx-2">
+                                <div class="col-auto pe-2">
+                                    <span class="imprint-en">Text Size</span>
+                                    <span class="imprint-es">Text Size</span>
+                                </div>
+                                <div class="col-auto">
+                                    <button onclick="DecreaseFontSize()" id="fontsize-decrease" class="btn btn-outline-white ratio ratio-1x1 rounded-0 p-0 minw-1rem5">
+                                        <div class="position-absolute h-auto top-50 start-50 translate-middle text-center">
+                                            <span class="fa-solid fa-minus"></span>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="col-auto">
+                                    <button onclick="SetFontSize(1)" id="fontsize-reset" class="btn btn-outline-white ratio ratio-1x1 rounded-0 p-0 minw-1rem5 disabled">
+                                        <div class="position-absolute h-auto top-50 start-50 translate-middle text-center">
+                                            <span class="fa-solid fa-arrows-rotate"></span>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="col-auto">
+                                    <button onclick="IncreaseFontSize()" id="fontsize-increase" class="btn btn-outline-white ratio ratio-1x1 rounded-0 p-0 minw-1rem5">
+                                        <div class="position-absolute h-auto top-50 start-50 translate-middle text-center">
+                                            <span class="fa-solid fa-plus"></span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto py-1 me-5">
+                        <div class="nav-item dropdown text-white">                            
+                                <div class="row mx-0 py-1 gy-0 gx-1">
+                                    <div class="col-auto my-auto">
+                                        <span class="fa-solid fa-globe"></span>
+                                    </div>
+                                    <div class="col-auto my-auto">
+                                        <span class="imprint-en">English</span>                                        
+                                    </div>
+                                </div>                            
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <button class="dropdown-item imprint-es" onclick="UpdateLanguageUrl(&#39;en&#39;)">English</button>
+                                    <button class="dropdown-item imprint-en border-primary text-primary fw-semibold border" onclick="UpdateLanguageUrl(&#39;en&#39;)">English</button>
+                                </li>                               
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="alert-close">×</div>
-          </div>
-
-          <div class="alert warn">
-            <div class="alert-left">
-              <div>
-                Please <strong>re-register</strong> with a new username and password the <strong>first time</strong> you login to the new Portal and App.
-              </div>
+            <div class="navbar navbar-expand bg-white">
+                <div class="container-xl">
+                    <div class="row mx-0 gx-0 w-100">
+                        <div class="col-auto logo-container">
+                            <a href="https://memberportal-dev.libertydentalplan.com/">
+                                <img alt="LIBERTY logo" src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/C-Stacked-Horizontal.svg" decoding="async" data-nimg="intrinsic" srcset="https://memberportal-blob-dev.libertydentalplan.com/C-Stacked-Horizontal.svg 1x,https://memberportal-blob-dev.libertydentalplan.com/C-Stacked-Horizontal.svg 2x">
+                            </a>
+                            <noscript></noscript>
+                        </div>
+                        <div class="col-auto ms-auto order-3">
+                            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                            </button>
+                            </div>
+                            <div class="col-auto my-auto mx-auto">
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <div class="col-lg my-auto">
+                                <div class="row mx-0 gx-3">
+                                    <div class="col my-auto">
+                                        <div class="row mx-0 justify-content-center">
+                                            <div id="dentalEmergencyButton" class="col-auto px-0">
+                                                <div class="btn btn-tertiary">
+                                                    <a target="_blank" href="https://www.teledentistry.com/insurance/liberty"><span class="imprint-en">I have a Dental Emergency</span></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                    </div>
             </div>
-            <div class="alert-close">×</div>
-          </div>
-        </div>
-
-        <div class="hero">
-          <h1>Welcome to<br>My Compass</h1>
-          <p>Liberty wants to get you the information you need, when you need it.</p>
-          <p>Look for a dentist, read about your benefits, download a copy of your Member ID Card, and more!</p>
-          <p>You can log into this portal 24 hours a day, 7 days a week.</p>
-        </div>
-      </section>
-
-      <aside class="login-panel">
-        <h2>Member Login</h2>
-
-        
-
-        <button class="login-btn" id="loginBtn" type="button">Login</button>
-
-        <div class="login-links">
-          <a href="#" id="forgotPasswordLink">Forgot Password?</a>
-        </div>
-
-       
-              <div class="create">
-                <p>
-                  New Member?<a id="createAccount"
-   href="https://ldpportalb2cdev.b2clogin.com/ldpportalb2cdev.onmicrosoft.com/B2C_1A_signup_signin_MemberPortal/api/CombinedSigninAndSignup/unified?local=signup&csrf_token=NXZmRG4wUVNWQklkdTRNY3RvU0pjd2ZqcjZheFVHckFYT3N5a2dUeXlWTm5TRHpOVEZyMUl1a1NVdXhmdmFhSy96aW8vQVpJM3JsMEs2R1FCQThWMlE9PTsyMDI2LTA0LTI5VDA5OjIyOjQxLjkzNTU4OVo7T0RVNDZaTTBqYWVEWnNtN04zYWp0QT09O3siT3JjaGVzdHJhdGlvblN0ZXAiOjJ9&tx=StateProperties=eyJUSUQiOiJmM2E1NGU3ZS1lYmExLTQ2ZDgtYjJmYi03MGY0Y2FkZTQ3YWEifQ&p=B2C_1A_signup_signin_MemberPortal"
-   target="_blank"
-   rel="noopener noreferrer">
-  Register Now
-</a>
-                </p>
-              </div>
-
-        <div id="status"></div>
-      </aside>
-    </main>
-
-    <footer class="footer-panel">
+         </div>
+      </header>
+        <main class="flex-grow-1">
+        <div class="container-xl py-5 my-4">
+           <div class="row mx-0">
+              <div class="row mx-0 gy-4 gx-5">
+                 <div class="col-lg-7">
+                     <div class="row">
+                         <div class="col-12 mt-3">
+                             <div class="alert alert-primary alert-dismissible d-flex align-items-center">
+                                 <img src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/Info.svg" alt="Information" class="me-2 info-icon">
+                                 <span>Para obtener ayuda en español, llame al <strong>888.703.6999</strong></span>
+                                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="row">
+                         <div class="col-12 mt-3">
+                             <div class="alert alert-primary alert-reregister alert-dismissible">
+                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                 Please<strong> re-register</strong> with a new username and password the <strong>first time</strong> you login to the new Portal and App.
+                             </div>
+                         </div>
+                     </div>
+                    <div class="row">
+                       <div class="col-12 mt-3">
+                          <div class="row mx-0 gy-1 mb-2 text-center text-black login-left-description mx-auto">
+                             <div class="col-12 c-p-d">
+                                <span class="fs-1 fw-bold">
+                                <span class="imprint-en">Welcome to<br>
+                                                    <span>My Compass</span></span>
+                                                <span class="imprint-es">Welcome to<br><span>My Compass</span></span>
+                                                </span>
+                             </div>
+                            <div class="col-12 py-2 px-5">
+                               <span class="fs-5">
+                                    <span class="imprint-en">Liberty wants to get you the information you need, when you need it.<br><br>
+                                    Look for a dentist, read about your benefits, download a copy of your Member ID Card, and more!<br><br>
+                                    You can log into this portal 24 hours a day,<br>
+                                    7 days a week.
+                                    </span>
+                                   
+                               <span class="imprint-es">Liberty wants to get you the information you need, when you need it.<br><br>
+                                       Look for a dentist, read about your benefits, download a copy of your Member ID Card, and more!<br><br>
+                                    You can log into this portal 24 hours a day,<br>
+                                    7 days a week.</span>
+                               </span>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+                       <div class="col-lg-5 col-xl-4 ms-auto text-dark login-panel-wrap"><div class="login-panel card shadow-sm border-0">
+<div class="card-body p-4 p-md-5 text-center">
+<h4 class="mb-4 fw-bold">Account Access</h4>
+<a id="loginBtn" class="btn btn-primary w-100 mb-3" href="#">Login</a>
+<a id="forgotPasswordBtn" class="btn btn-outline-primary w-100 mb-3" href="#">Forgot Password</a>
+<a id="registerNowBtn" class="btn btn-link w-100 fw-semibold" href="#">Register Now</a>
+<div class="mt-4"><a id="forgotUsernameLink" href="#forgotUsername" class="text-decoration-none">Forgot Username?</a></div>
+</div>
+</div>
+                           <div class="container unified_container" role="presentation">
+                               <div class="row">
+                                   <div class="panel panel-default">
+                                       <div class="panel-body position-relative">
+                                           <div id="forgotUsername" class="position-absolute w-100 text-center">
+                                               <a href="https://ldpportalb2cdev.b2clogin.com/ldpportalB2CDev.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1A_FORGOTUSERNAME_MEMBERPORTAL&amp;client_id=187473b9-a6d2-4a5f-a851-4f073fbd3b49&amp;nonce=defaultNonce&amp;redirect_uri=https%3A%2F%2Fmemberportal-dev.libertydentalplan.com%2Fapi%2Fauth%2Fcallback%2Fazure-ad-b2c&amp;scope=openid&amp;response_type=id_token&amp;prompt=login">
+                                                   <span class="imprint-en">Forgot Username?</span>
+                                                   <span class="imprint-es">Forgot Username?</span>
+                                               </a>
+                                           </div>
+                                           <div id="api" role="main"></div>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+        </main>
+        <footer class="footer-panel">
                 <div class="container">
                     <div class="row">
                         <div class="col-12 col-md-2 mb-3 d-flex justify-content-center align-items-start">
                             <a href="https://www.libertydentalplan.com/" target="_blank" rel="noreferrer">
-                                <img src="https://memberportal-blob.libertydentalplan.com/footer-logo.png" alt="Logo" class="img-fluid logo">
+                                <img src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/footer-logo.png" alt="Logo" class="img-fluid logo">
                             </a>
                         </div>
                         <div class="col-12 col-md-2 mb-3">
@@ -510,7 +251,7 @@
                             </ul>
                         </div>
                         <div class="col-12 col-md-1 mb-3 footer-up-arrow">
-                            <h5><a href="https://ldpmemportalb2cprod.b2clogin.com/ldpmemportalb2cprod.onmicrosoft.com/b2c_1a_signup_signin_memberportal/oauth2/v2.0/authorize?client_id=63552c17-cb16-4397-a916-7b834f6f26f1&amp;scope=offline_access%20openid%20https%3A%2F%2Fldpmemportalb2cprod.onmicrosoft.com%2Fmemberserviceapi%2Fmemberapi.publicread%20https%3A%2F%2Fldpmemportalb2cprod.onmicrosoft.com%2Fmemberserviceapi%2Fmemberapi.read%20https%3A%2F%2Fldpmemportalb2cprod.onmicrosoft.com%2Fmemberserviceapi%2Fmemberapi.write&amp;response_type=code&amp;redirect_uri=https%3A%2F%2Fmemberportal.libertydentalplan.com%2Fapi%2Fauth%2Fcallback%2Fazure-ad-b2c&amp;state=yv290HqVNwcS5bgTKk0eya73_tqcLtveJ_Xs2_5Bdmc#"><img alt="Scroll Up" src="./LIBERTY Dental Plan&#39;s Member Portal - Signin_files/icon-arrowup.png" decoding="async" data-nimg="intrinsic"></a></h5>
+                            <h5><a href="https://memberportal-blob-dev.libertydentalplan.com/signupsignin.html#"><img alt="Scroll Up" src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/icon-arrowup.png" decoding="async" data-nimg="intrinsic"></a></h5>
                         </div>
                     </div>
                     <div class="row footer-black">
@@ -523,7 +264,7 @@
                             <span class="mx-3 font-bold"><a class="text-white text-decoration-none " href="https://www.libertydentalplan.com/Legal/Grievances.aspx" target="_blank" rel="noreferrer"> GRIEVANCE FORMS</a></span>
                             <span class="mx-3">
                                 <a class="text-white text-decoration-none" href="https://www.libertydentalplan.com/Members/Forms-Literature.aspx" target="_blank" rel="noreferrer">
-                                    <img alt="Nondiscrimination and Language Assistance" loading="lazy" width="25" height="25" decoding="async" data-nimg="1" class="inline disc-img" src="./LIBERTY Dental Plan&#39;s Member Portal - Signin_files/ic_languages_16px.png">
+                                    <img alt="Nondiscrimination and Language Assistance" loading="lazy" width="25" height="25" decoding="async" data-nimg="1" class="inline disc-img" src="./LIBERTY Dental Plan&#39;s Member Portal - 1Signin_files/ic_languages_16px.png">
                                     <span class="pl-6">Nondiscrimination and Language Assistance</span>
                                 </a>
                             </span>
@@ -531,78 +272,49 @@
                     </div>
                 </div>
         </footer>
-  </div>
+        <div role="dialog" aria-modal="true" class="modal fade" tabindex="-1" aria-labelledby="dentalEmergencyModalLabel" id="dentalEmergencyModal">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                     <div class="text-bg-primary modal-header">
+                            <div class="fs-5 modal-title h4" id="dentalEmergencyModalLabel">
+                                <span class="imprint-en">Have a Dental Emergency?</span>
+                                <span class="imprint-es">Have a Dental Emergency?</span>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                            <p>
+                                <span class="imprint-en">Text "Teledental" to 917-946-5359 for a FREE virtual visit with one of LIBERTY's licensed dentists (9am - 5pm EST, M - F)</span>
+                                <span class="imprint-es">Text "Teledental" to 917-946-5359 for a FREE virtual visit with one of LIBERTY's licensed dentists (9am - 5pm EST, M - F)</span>
+                            </p>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+ 
 
-  <script>
-  const msalConfig = {
-    auth: {
-      clientId: "d1141f25-2729-4ea5-9892-f80db4205ebf",
-      authority: "https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505",
-      knownAuthorities: ["birlasoftdentalentra.ciamlogin.com"],
-      redirectUri: "https://anilkishore1978.github.io/ACPL-test/"
-    },
-    cache: {
-      cacheLocation: "sessionStorage"
-    }
-  };
-
-  const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-  async function startApp() {
-    try {
-      const response = await msalInstance.handleRedirectPromise();
-
-      if (response && response.account) {
-        msalInstance.setActiveAccount(response.account);
-        window.location.href = "dashboard.html";
-        return;
-      }
-
-      const accounts = msalInstance.getAllAccounts();
-      if (accounts.length > 0) {
-        msalInstance.setActiveAccount(accounts[0]);
-      }
-
-    } catch (e) {
-      console.error("MSAL redirect error:", e);
-      document.getElementById("status").innerText =
-        e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
-    }
-  }
-
-  // ✅ FIX: Wait for DOM
-  document.addEventListener("DOMContentLoaded", () => {
-    startApp();
-
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      try {
-        await msalInstance.loginRedirect({
-          scopes: ["openid", "profile"],
-          prompt: "select_account"
-        });
-      } catch (e) {
-        console.error("MSAL login error:", e);
-      }
-    });
-
-    document.getElementById("forgotPasswordLink")?.addEventListener("click", async (event) => {
-      event.preventDefault();
-      try {
-        await msalInstance.loginRedirect({
-          scopes: ["openid", "profile"],
-          extraQueryParameters: { action: "forgotPassword" }
-        });
-      } catch (e) {
-        console.error("Forgot password redirect error:", e);
-      }
-    });
-      } catch (e) {
-        console.error("MSAL login error:", e);
-        document.getElementById("status").innerText =
-          e.errorCode ? `${e.errorCode}: ${e.errorMessage}` : "Authentication error. Check console (F12).";
-      }
-    });
-  });
+<script>
+const CLIENT_ID = "d1141f25-2729-4ea5-9892-f80db4205ebf";
+const TENANT_ID = "36090fda-8a83-4040-8c58-7cf784511505";
+const TENANT_HOST = "birlasoftdentalentra.ciamlogin.com";
+const POLICY = "B2C_1_signup_signin";
+const REDIRECT_URI = window.location.origin + "/auth/callback";
+const SCOPES = "openid profile email offline_access";
+function authUrl(extraParams = {}) {
+  const u = new URL(`https://${TENANT_HOST}/${TENANT_ID}/oauth2/v2.0/authorize`);
+  u.searchParams.set('client_id', CLIENT_ID);
+  u.searchParams.set('response_type', 'code');
+  u.searchParams.set('redirect_uri', REDIRECT_URI);
+  u.searchParams.set('scope', SCOPES);
+  u.searchParams.set('p', POLICY);
+  u.searchParams.set('prompt', 'login');
+  Object.entries(extraParams).forEach(([k,v]) => u.searchParams.set(k,v));
+  return u.toString();
+}
+document.getElementById('loginBtn').href = authUrl();
+document.getElementById('registerNowBtn').href = authUrl({screen_hint:'signup'});
+document.getElementById('forgotPasswordBtn').href = authUrl({forgot:'1'});
 </script>
-</body>
-</html>
+
+</body></html>
