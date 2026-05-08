@@ -430,24 +430,18 @@
       <aside class="login-panel">
         <h2>Member Login</h2>
 
-        <div class="field">
-          <label for="username">Username</label>
-          <input id="username" type="text" placeholder="Username" autocomplete="username">
-        </div>
-
         
 
-        <button class="login-btn" id="loginBtn" type="button">Entra External ID Login</button>
+        <button class="login-btn" id="loginBtn" type="button">Login</button>
 
         <div class="login-links">
-          <a href="#" onclick="return false;">Forgot Password?</a><br>
-          <a href="#" onclick="return false;">Forgot Username?</a>
+          <a href="#" id="forgotPasswordLink">Forgot Password?</a>
         </div>
 
        
               <div class="create">
                 <p>
-                  Click here to access your account<a id="createAccount"
+                  New Member?<a id="createAccount"
    href="https://ldpportalb2cdev.b2clogin.com/ldpportalb2cdev.onmicrosoft.com/B2C_1A_signup_signin_MemberPortal/api/CombinedSigninAndSignup/unified?local=signup&csrf_token=NXZmRG4wUVNWQklkdTRNY3RvU0pjd2ZqcjZheFVHckFYT3N5a2dUeXlWTm5TRHpOVEZyMUl1a1NVdXhmdmFhSy96aW8vQVpJM3JsMEs2R1FCQThWMlE9PTsyMDI2LTA0LTI5VDA5OjIyOjQxLjkzNTU4OVo7T0RVNDZaTTBqYWVEWnNtN04zYWp0QT09O3siT3JjaGVzdHJhdGlvblN0ZXAiOjJ9&tx=StateProperties=eyJUSUQiOiJmM2E1NGU3ZS1lYmExLTQ2ZDgtYjJmYi03MGY0Y2FkZTQ3YWEifQ&p=B2C_1A_signup_signin_MemberPortal"
    target="_blank"
    rel="noopener noreferrer">
@@ -583,8 +577,25 @@
     document.getElementById("loginBtn").addEventListener("click", async () => {
       try {
         await msalInstance.loginRedirect({
-          scopes: ["openid", "profile", "email"]
+          scopes: ["openid", "profile"],
+          prompt: "select_account"
         });
+      } catch (e) {
+        console.error("MSAL login error:", e);
+      }
+    });
+
+    document.getElementById("forgotPasswordLink")?.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        await msalInstance.loginRedirect({
+          scopes: ["openid", "profile"],
+          extraQueryParameters: { action: "forgotPassword" }
+        });
+      } catch (e) {
+        console.error("Forgot password redirect error:", e);
+      }
+    });
       } catch (e) {
         console.error("MSAL login error:", e);
         document.getElementById("status").innerText =
