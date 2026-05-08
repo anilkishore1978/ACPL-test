@@ -281,20 +281,27 @@
       authority: "https://birlasoftdentalentra.ciamlogin.com/36090fda-8a83-4040-8c58-7cf784511505",
       redirectUri: "https://anilkishore1978.github.io/ACPL-test/"
     },
-    cache: {
-      cacheLocation: "sessionStorage",
-      storeAuthStateInCookie: false
-    }
+    cache: { cacheLocation: "sessionStorage", storeAuthStateInCookie: false }
   };
 
-  const loginRequest = { scopes: ["openid", "profile", "email"] };
   const msalInstance = new msal.PublicClientApplication(msalConfig);
+  const loginRequest = { scopes: ["openid", "profile", "email"] };
 
   async function initAuth() {
-    await msalInstance.handleRedirectPromise().catch(console.error);
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      msalInstance.setActiveAccount(accounts[0]);
+    try {
+      const response = await msalInstance.handleRedirectPromise();
+      if (response && response.account) {
+        msalInstance.setActiveAccount(response.account);
+        window.location.href = "dashboard.html";
+        return;
+      }
+
+      const accounts = msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        msalInstance.setActiveAccount(accounts[0]);
+      }
+    } catch (e) {
+      console.error(e);
     }
 
     document.getElementById("loginBtn").addEventListener("click", () => {
